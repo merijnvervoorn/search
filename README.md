@@ -34,5 +34,6 @@ You can try out Merijn Search here: [merijnvervoorn.com/search](https://merijnve
 ## 🙏 Acknowledgments
 
 [Theo at Unduck](https://github.com/t3dotgg/unduck) for providing the DuckDuckGo Bangs search functionality.
+
 [larafinnegan](https://github.com/larafinnegan/google-homepage) for the base Google landing page design. 
 

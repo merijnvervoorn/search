@@ -176,3 +176,10 @@ input[type=text]::-ms-reveal {  display: none; width : 0; height: 0; }
 	flex-grow: 1; /* Ensures the columns grow equally */
   }
   
+  .links .text a:focus {
+	font-family: 'Open Sans', Arial; 
+	font-weight: 700; 
+	font-size: 16;
+	text-decoration: underline;
+	  }
+  

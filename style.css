@@ -19,7 +19,6 @@ header a:link, a:visited, a:active {
 	margin-right:5px;
 	margin-left:5px;
 	position:relative;
-	top:-10px;
 }
 
 header a:hover {
@@ -181,5 +180,6 @@ input[type=text]::-ms-reveal {  display: none; width : 0; height: 0; }
 	font-weight: 700; 
 	font-size: 16;
 	text-decoration: underline;
+	transform: 0px 0px 0px 0px;
 	  }
   

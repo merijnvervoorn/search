@@ -17,11 +17,13 @@ Merijn Search is a new tab homepage that leverages **DuckDuckGo Bangs**, powered
 
 1. **Clone the repository**  
    ```bash
-   git clone https://github.com/yourusername/merijn-search.git
-   cd merijn-search
+   git clone https://github.com/merijnvervoorn/search.git
+   cd search # Make your changes
 
-2. **Open the index.html file in your browser**
-    Optionally, set it as your browser's new tab homepage. In Firefox use [NewTab Override Add-on](https://addons.mozilla.org/de/firefox/addon/new-tab-override/). Here you can select ' Set focus to the web page instead of the address bar' to make the search bar active on opening a new tab.
+   # Push to your own repository and run GitHub Pages
+
+2. **Open the  GitHub Page in your browser**
+    Optionally, set it as your browser's new tab homepage. In Firefox use [NewTab Override Add-on](https://addons.mozilla.org/de/firefox/addon/new-tab-override/). Here you can select 'Set focus to the web page instead of the address bar' to make the search bar active on opening a new tab.
 
 ---
 

@@ -64,13 +64,17 @@ div img {
 	border-bottom: 1px solid #d3d3d3;
 	border-right: 1px solid #d3d3d3;
 	border-left: 1px solid #d3d3d3;
+	border-radius: 25px;
+	padding: 20px;
 	padding-right: 30px;
+	padding-left: 30px;
 	font: 16px arial, sans-serif;
 	text-indent:5px;
-	background: url('data:image/gif;base64,R0lGODlhHAAmAKIHAKqqqsvLy0hISObm5vf394uLiwAAAP///yH5BAEAAAcALAAAAAAcACYAAAO9eLpMIMYIQJi9DcYtKv6KtnHgB4yoAZSXKAyDy1rjoAzjzOQLrx8+4OanCAZnxiExGSEKmz3lj2lwUq3SZ3WZPbKuXGgxu9t4tLYDTkpIRQILF0x2G4lWipM7gj/oJQUkcXsCDCIFATULBCIcZ2tvB3QLDxETFnR/BgU/gRt9jX0gnpYMkJZpFzEoqQqJKAIBaQOVKHAXr3t7txgBjboSvB8EpLoFZywOAo3LFE5lYs/QW9LT1TRk1V7S2xYJADs');
-	background-repeat:no-repeat;
-	background-position:548px 4px;
-	background-size:14px 19px;
+	box-shadow: 0 2px 6px 0 rgba(34, 34, 34, 0.2), 0 6px 20px 0 rgba(34, 34, 34, 0.19);
+	background: 
+	url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gray"><path d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.48-4.23 6.5 6.5 0 10-6.5 6.5 6.471 6.471 0 004.23-1.48l.27.28v.79l4.99 4.98 1.49-1.49-4.99-4.98zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5z"/></svg>') 
+	no-repeat 10px center; /* Left search icon */
+	background-size: 18px 18px, 14px 19px;
 	}
 
 .main {
@@ -78,21 +82,21 @@ div img {
 }
 
 .button {
-	border: 1px solid #d3d3d3;
+	border: 1px solid #ffffff;
 	background: #f3f3f3;
-	color:#696969;
+	color:#7e7e7e;
 	margin-left:4px;
 	margin-right:4px;
 	margin-top: 15px;
 	font-family: arial, sans-serif;
-	font-size: 11px;
+	font-size: 12px;
 	font-weight: bold;
 	padding: 7px;
 	border-radius:2px;
 }
 
 .button:hover {
-	color: #2a2a2a;
+	color: #454545;
 	border: 1px solid #bdbdbd;
 }
 

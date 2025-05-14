@@ -2,6 +2,9 @@
 
 Merijn Search is a new tab homepage that leverages **DuckDuckGo Bangs**, powered by [Unduck](https://github.com/t3dotgg/unduck) (unduck.link). It provides a fast, privacy-friendly way to search the web efficiently. The default search has been set to DuckDuckgo and it can even serve URL's as search queries and ChatGPT can answer with !gpt.
 
+![Hero Image](./assets/hero.png)
+
+
 ---
 
 ## 🚀 Features

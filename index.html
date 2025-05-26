@@ -214,6 +214,14 @@
 				event.preventDefault(); // Prevent normal form submission
 				var searchQuery = query.replace('!chat', '').trim(); // Remove "!chat" and trim spaces
 				window.location.href = `https://chat.openai.com/?model=gpt-4o&q=${encodeURIComponent(searchQuery)}`;
+			} else if (query.includes('!p')) {
+				event.preventDefault(); // Prevent normal form submission
+				var searchQuery = query.replace('!p', '').trim(); // Remove "!p" and trim spaces
+				window.location.href = `https://www.perplexity.ai/?q=${encodeURIComponent(searchQuery)}`;
+			} else if (query.includes('!m')) {
+				event.preventDefault(); // Prevent normal form submission
+				var searchQuery = query.replace('!m', '').trim(); // Remove "!m" and trim spaces
+				window.location.href = `https://www.merijn.cc/${encodeURIComponent(searchQuery)}`;
 			} else if (query.includes('!')) {
 				this.action = 'https://unduck.link';
 				this.querySelector('input[type="submit"]').name = '';

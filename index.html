@@ -27,6 +27,7 @@
         background-image: url('https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fmedia.giphy.com%2Fmedia%2FfV5FG8TpqGcso%2Fgiphy.gif&f=1&nofb=1&ipt=f6a2b25c32a22fb464cf49f670de21a3a62353b698927353099e6689dbe5ccd0');
         background-size: cover;
         background-position: center;
+        background-attachment: fixed;
         font-family: 'Courier New', Courier, monospace;
         color: #fff;
         display: flex;
@@ -34,7 +35,7 @@
         align-items: center;
     }
 
-    /* CRT Scanline Effect Overlay (Z-Index 999) */
+    /* CRT Scanline Effect Overlay */
     body::after {
         content: "";
         position: absolute;
@@ -50,25 +51,15 @@
         position: absolute;
         top: 30px;
         left: 30px;
-        /* FIXED: Z-Index must be higher than body::after (999) to be visible */
         z-index: 1001;
         width: 65px;
         height: auto;
-        opacity: 0.9; /* Increased visibility slightly */
+        opacity: 0.8;
         transition: 0.3s all ease-in-out;
-        /* Orange glow to match the logo and theme */
-        filter: drop-shadow(0 0 5px rgba(245, 138, 7, 0.8));
+        filter: drop-shadow(0 0 8px rgba(245, 138, 7, 0.6));
     }
-    .hud-logo img {
-        width: 100%;
-        height: auto;
-        display: block;
-    }
-    .hud-logo:hover {
-        opacity: 1;
-        filter: drop-shadow(0 0 15px rgba(245, 138, 7, 1));
-        transform: scale(1.05);
-    }
+    .hud-logo img { width: 100%; height: auto; display: block; }
+    .hud-logo:hover { opacity: 1; filter: drop-shadow(0 0 15px rgba(245, 138, 7, 1)); transform: scale(1.05); }
 
     /* --- THE CENTRAL CORE (Search) --- */
     .core-system {
@@ -90,18 +81,26 @@
         animation: spin 20s linear infinite;
         box-shadow: 0 0 50px rgba(255, 255, 255, 0.05);
     }
-    
     .core-circle::before {
         content: ''; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff;
     }
-
     @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
     .clock {
         font-size: 3rem;
         font-weight: bold;
         text-shadow: 0 0 15px rgba(255,255,255,0.8);
-        margin-bottom: 10px;
+        margin-bottom: 5px; /* Reduced margin to fit location */
+    }
+
+    .location {
+        font-size: 0.75rem;
+        color: var(--neon-green);
+        letter-spacing: 3px;
+        margin-bottom: 20px;
+        text-shadow: 0 0 5px rgba(57, 255, 20, 0.6);
+        opacity: 0.8;
+        font-weight: bold;
     }
 
     .search-input {
@@ -113,6 +112,7 @@
         font-family: inherit;
         font-size: 1.1rem;
         width: 100%;
+        box-sizing: border-box;
         text-align: center;
         outline: none;
         transition: 0.3s;
@@ -149,6 +149,16 @@
         width: 100%;
     }
 
+    /* PLANET IMAGE STYLING (New) */
+    .station-icon img {
+        width: 55px;
+        height: 55px;
+        object-fit: contain;
+        /* Glows with the station's text color */
+        filter: drop-shadow(0 0 5px currentColor);
+        transition: transform 0.3s;
+    }
+
     .station-content {
         opacity: 0;
         width: 240px;
@@ -170,18 +180,8 @@
         white-space: nowrap;
     }
 
-    /* Header Link styling (MERIJN) */
-    .header-link {
-        text-decoration: none;
-        color: inherit;
-        transition: 0.2s;
-        display: block;
-        width: 100%;
-    }
-    .header-link:hover {
-        text-shadow: 0 0 10px currentColor;
-        letter-spacing: 1px;
-    }
+    .header-link { text-decoration: none; color: inherit; transition: 0.2s; display: block; width: 100%; }
+    .header-link:hover { text-shadow: 0 0 10px currentColor; letter-spacing: 1px; }
 
     .station:hover {
         width: 270px;
@@ -190,10 +190,17 @@
         z-index: 20;
         box-shadow: 0 0 30px rgba(0,0,0,0.8);
     }
+    .station:hover .station-content { opacity: 1; pointer-events: auto; }
     
-    .station:hover .station-content {
-        opacity: 1;
-        pointer-events: auto;
+    /* Planet Spin Effect on Hover */
+    .station:hover .station-icon img {
+        transform: rotate(15deg) scale(1.1);
+    }
+
+    /* FLIP RED AND PURPLE PLANETS HORIZONTALLY */
+    #st-east .station-icon img,
+    #st-south .station-icon img {
+        transform: scaleX(-1);
     }
 
     /* --- LINKS STYLING --- */
@@ -207,12 +214,7 @@
         transition: 0.2s;
         background: rgba(255,255,255,0.05);
     }
-    .link-btn:hover {
-        background: #fff;
-        color: #000;
-        font-weight: bold;
-        transform: translateX(5px);
-    }
+    .link-btn:hover { background: #fff; color: #000; font-weight: bold; transform: translateX(5px); }
 
     .sub-header {
         font-size: 0.7rem;
@@ -223,7 +225,6 @@
         padding-top: 5px;
     }
 
-    /* --- GRIDS --- */
     .tz-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
     .split-row { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 
@@ -237,97 +238,125 @@
         transition: 0.2s;
         border-radius: 3px;
     }
-    .tz-btn:hover {
-        background: var(--neon-green);
-        color: #000;
-        border-color: var(--neon-green);
-        font-weight: bold;
-    }
+    .tz-btn:hover { background: var(--neon-green); color: #000; border-color: var(--neon-green); font-weight: bold; }
 
     /* --- POSITIONS --- */
-    /* NORTH: RESISTANCE (Green) */
     #st-north {
-        top: 5%;
-        left: 50%;
-        transform: translateX(-50%);
-        border-color: var(--neon-green);
-        box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+        top: 5%; left: 50%; transform: translateX(-50%);
+        border-color: var(--neon-green); box-shadow: 0 0 10px rgba(57, 255, 20, 0.2); color: var(--neon-green);
     }
     #st-north:hover { box-shadow: 0 0 20px var(--neon-green); }
-    #st-north h3 { color: var(--neon-green); }
 
-    /* WEST: PERSONAL (Orange) */
     #st-west {
-        left: 8%;
-        top: 50%;
-        transform: translateY(-50%);
-        border-color: var(--neon-orange);
-        box-shadow: 0 0 10px rgba(245, 138, 7, 0.2);
+        left: 8%; top: 50%; transform: translateY(-50%);
+        border-color: var(--neon-orange); box-shadow: 0 0 10px rgba(245, 138, 7, 0.2); color: var(--neon-orange);
     }
     #st-west:hover { box-shadow: 0 0 20px var(--neon-orange); }
-    #st-west h3 { color: var(--neon-orange); }
 
-    /* EAST: SCHOOL (Red) */
     #st-east {
-        right: 8%;
-        top: 50%;
-        transform: translateY(-50%);
-        border-color: var(--neon-red);
-        box-shadow: 0 0 10px rgba(188, 0, 49, 0.2);
+        right: 8%; top: 50%; transform: translateY(-50%);
+        border-color: var(--neon-red); box-shadow: 0 0 10px rgba(188, 0, 49, 0.2); color: var(--neon-red);
     }
     #st-east:hover { box-shadow: 0 0 20px var(--neon-red); }
-    #st-east h3 { color: var(--neon-red); }
 
-    /* SOUTH: WORK (Purple) */
     #st-south {
-        bottom: 5%;
-        left: 50%;
-        transform: translateX(-50%);
-        border-color: var(--neon-purple);
-        box-shadow: 0 0 10px rgba(146, 141, 247, 0.2);
-        transform-origin: bottom center;
+        bottom: 5%; left: 50%; transform: translateX(-50%);
+        border-color: var(--neon-purple); box-shadow: 0 0 10px rgba(146, 141, 247, 0.2); transform-origin: bottom center; color: var(--neon-purple);
     }
     #st-south:hover { box-shadow: 0 0 20px var(--neon-purple); transform: translateX(-50%) translateY(-20px); }
-    #st-south h3 { color: var(--neon-purple); }
-
 
     /* --- SATELLITES --- */
     .satellite {
         position: absolute;
-        width: 40px; height: 40px;
-        border-radius: 50%;
-        border: 1px dashed #555;
+        width: 80px; height: 80px; /* Increased size from 60px */
+        /* Removed border and background for free-floating effect */
         display: flex; align-items: center; justify-content: center;
         text-decoration: none;
         color: #888;
         transition: 0.3s;
         z-index: 8;
-        background: rgba(0,0,0,0.5);
-        font-size: 1.1rem;
+        /* Fixed: Removed pulse to allow float to work correctly */
+        animation: float 6s ease-in-out infinite;
     }
-    .satellite:hover { border-color: #fff; color: #fff; box-shadow: 0 0 15px #fff; transform: scale(1.2); }
+    .satellite img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        /* Added subtle shadow for depth */
+        filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
+    }
+    .satellite:hover { 
+        transform: scale(1.2); 
+        /* Glow effect on hover instead of border */
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+    }
     
-    #sat-yt { top: 32%; left: 32%; border-color: #ff0000; color: #ff0000; } 
-    #sat-nf { top: 32%; right: 32%; border-color: #E50914; color: #E50914; } 
-    #sat-gh { bottom: 32%; right: 32%; border-color: #fff; color: #fff; font-size: 1.4rem; }
-    #sat-ir { bottom: 32%; left: 32%; border-color: #50a2ff; color: #50a2ff; }
+    #sat-yt { top: 20%; left: 28%; border-color: #ff0000; color: #ff0000; animation: float-yt 5.5s ease-in-out infinite; } 
+    #sat-nf { top: 35%; right: 25%; border-color: #E50914; color: #E50914; animation: float-nf 7s ease-in-out infinite; } 
+    #sat-gh { bottom: 29%; right: 30%; border-color: #fff; color: #fff; font-size: 1.4rem; animation: float-gh 6.2s ease-in-out infinite; }
+    #sat-ir { bottom: 24%; left: 24%; border-color: #50a2ff; color: #50a2ff; animation: float-ir 8s ease-in-out infinite; }
 
-    /* Pulse Animation */
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-    .satellite { animation: pulse 5s infinite ease-in-out; }
-    #sat-nf { animation-delay: 1s; }
-    #sat-gh { animation-delay: 2s; }
+    /* Unique Floating Animations for Each Satellite */
+    @keyframes float-yt {
+        0% { transform: translateY(0px) translateX(0px); }
+        50% { transform: translateY(-18px) translateX(12px); }
+        100% { transform: translateY(0px) translateX(0px); }
+    }
 
+    @keyframes float-nf {
+        0% { transform: translateY(0px) translateX(0px); }
+        50% { transform: translateY(-12px) translateX(-15px); }
+        100% { transform: translateY(0px) translateX(0px); }
+    }
+
+    @keyframes float-gh {
+        0% { transform: translateY(0px) translateX(0px); }
+        50% { transform: translateY(-20px) translateX(8px); }
+        100% { transform: translateY(0px) translateX(0px); }
+    }
+
+    @keyframes float-ir {
+        0% { transform: translateY(0px) translateX(0px); }
+        50% { transform: translateY(-10px) translateX(-18px); }
+        100% { transform: translateY(0px) translateX(0px); }
+    }
+
+    /* MOBILE OPTIMIZATION */
     @media (max-width: 800px) {
-        body { flex-direction: column; overflow-y: auto; height: auto; padding: 50px 0; }
-        /* Hide logo on small screens to save space */
+        body {
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: auto;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
         .hud-logo { display: none; }
-        .core-system { margin-bottom: 50px; margin-top: 50px; }
-        .station { position: relative; top: auto; left: auto; right: auto; bottom: auto; transform: none !important; margin-bottom: 20px; width: 80%; height: auto; }
-        .station-content { opacity: 1; width: 100%; }
-        .station-icon { display: none; }
-        .satellite { display: none; }
+        .core-system { margin-bottom: 50px; margin-top: 50px; width: 90%; }
         .core-circle { display: none; }
+        .clock { font-size: 2.5rem; }
+
+        .station {
+            position: relative; top: auto !important; left: auto !important; right: auto !important; bottom: auto !important; transform: none !important;
+            width: 85%; height: auto; min-height: 0; margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* Hide icons on mobile to save space/layout */
+        .station-icon { display: none; }
+        
+        .station-content { opacity: 1; width: 100%; pointer-events: auto; }
+        
+        .link-btn { padding: 10px; font-size: 1rem; margin-bottom: 5px; }
+
+        .satellite-dock {
+            display: flex; justify-content: center; width: 100%; flex-wrap: wrap;
+        }
+        .satellite {
+            position: relative; display: inline-flex; top: auto !important; left: auto !important; right: auto !important; bottom: auto !important; margin: 10px; width: 80px; height: 80px; font-size: 1.2rem;
+        }
     }
 
 </style>
@@ -341,14 +370,18 @@
     <div class="core-system">
         <div class="core-circle"></div>
         <div class="clock" id="clock">00:00</div>
+        <div class="location">LOC: ZOETERWOUDE, NL</div>
         <form id="searchForm" name="unduck" role="search" action="https://unduck.link" method="GET">
             <input type="text" id="searchInput" class="search-input" name="q" placeholder="INITIATE..." autocomplete="off">
         </form>
         <div style="margin-top:10px; font-size: 0.7rem; color: #666;">CMD: !g !gpt !r !m</div>
     </div>
 
+    <!-- NORTH STATION: RESISTANCE (Green Planet) -->
     <div class="station" id="st-north">
-        <div class="station-icon">🟢</div>
+        <div class="station-icon">
+            <img src="planet-green.png" alt="Resistance">
+        </div>
         <div class="station-content">
             <h3>RESISTANCE</h3>
             <a href="https://annas-archive.org/" class="link-btn">Book Archive</a>
@@ -373,8 +406,11 @@
         </div>
     </div>
 
+    <!-- WEST STATION: MERIJN (Orange Planet) -->
     <div class="station" id="st-west">
-        <div class="station-icon">🟠</div>
+        <div class="station-icon">
+            <img src="planet-orange.png" alt="Merijn">
+        </div>
         <div class="station-content">
             <h3><a href="https://merijnvervoorn.com" class="header-link">MERIJN</a></h3>
             
@@ -386,8 +422,11 @@
         </div>
     </div>
 
+    <!-- EAST STATION: SCHOOL (Red Planet) -->
     <div class="station" id="st-east">
-        <div class="station-icon">🔴</div>
+        <div class="station-icon">
+            <img src="planet-red.png" alt="School">
+        </div>
         <div class="station-content">
             <h3>SCHOOL</h3>
             <a href="https://login.canvas.uva.nl" class="link-btn">Canvas</a>
@@ -399,8 +438,11 @@
         </div>
     </div>
 
+    <!-- SOUTH STATION: WORK (Purple Planet) -->
     <div class="station" id="st-south">
-        <div class="station-icon">🟣</div>
+        <div class="station-icon">
+            <img src="planet-purple.png" alt="Work">
+        </div>
         <div class="station-content">
             <h3><a href="https://justprepare.com" class="header-link">WORK</a></h3>
             <a href="https://justprepare.nl" class="link-btn">Just Prepare</a>
@@ -409,11 +451,22 @@
             <a href="https://flp.sap.uva.nl/fiori" class="link-btn">Zelfbediening</a>
         </div>
     </div>
-
-    <a href="https://www.youtube.com/feed/subscriptions" class="satellite" id="sat-yt" title="Subs Only">YT</a>
-    <a href="https://www.netflix.com/browse/my-list" class="satellite" id="sat-nf" title="My List">N</a>
-    <a href="https://github.com/merijnvervoorn" class="satellite" id="sat-gh" title="GitHub">GH</a>
-    <a href="https://www.inoreader.com/all_articles" class="satellite" id="sat-ir" title="Inoreader">INO</a>
+    <!-- SATELLITES -->
+    <!-- Wrapped in a container for better mobile layout control -->
+    <div class="satellite-dock">
+        <a href="https://www.youtube.com/feed/subscriptions" class="satellite" id="sat-yt" title="YouTube">
+            <img src="satellite-yt.png" alt="YT">
+        </a>
+        <a href="https://www.netflix.com/browse/my-list" class="satellite" id="sat-nf" title="Netflix">
+            <img src="satellite-netflix.png" alt="Netflix">
+        </a>
+        <a href="https://github.com/merijnvervoorn" class="satellite" id="sat-gh" title="GitHub">
+            <img src="satellite-github.png" alt="GitHub">
+        </a>
+        <a href="https://www.inoreader.com/all_articles" class="satellite" id="sat-ir" title="Inoreader">
+            <img src="satellite-inoreader.png" alt="Inoreader">
+        </a>
+    </div>
 
     <script>
         function updateClock() {
@@ -430,6 +483,9 @@
             if (query.includes('!gpt')) {
                 event.preventDefault();
                 window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(query.replace('!gpt', '').trim())}`;
+            } else if (query.includes('!g')) {
+                event.preventDefault();
+                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query.replace('!g', '').trim())}`;
             } else if (query.includes('!r')) {
                 event.preventDefault();
                 window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query.replace('!r', '').trim())}+site%3Areddit.com`;

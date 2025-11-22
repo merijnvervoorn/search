@@ -1,255 +1,452 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="style.css">
-		<link rel="shortcut icon" type="image/png" href="favi.png"/>
-		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
-		<link rel="stylesheet" href=
-		"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css">
-		</link>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COMMAND_INTERFACE // MERIJN</title>
+<link rel="shortcut icon" type="image/png" href="https://merijnvervoorn.com/static/shape/bc-cir.png"/>
+<style>
+    /* --- CORE VARIABLES --- */
+    :root {
+        --neon-orange: #F58A07;
+        --neon-red: #bc0031;
+        --neon-purple: #928DF7;
+        --neon-green: #39ff14;
+        --bg-glass: rgba(0, 0, 0, 0.75);
+        --border-glass: rgba(255, 255, 255, 0.2);
+    }
+
+    /* --- BASE SETTINGS --- */
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        background-color: #000;
+        background-image: url('https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fmedia.giphy.com%2Fmedia%2FfV5FG8TpqGcso%2Fgiphy.gif&f=1&nofb=1&ipt=f6a2b25c32a22fb464cf49f670de21a3a62353b698927353099e6689dbe5ccd0');
+        background-size: cover;
+        background-position: center;
+        font-family: 'Courier New', Courier, monospace;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* CRT Scanline Effect Overlay (Z-Index 999) */
+    body::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        background-size: 100% 2px, 3px 100%;
+        pointer-events: none;
+        z-index: 999;
+    }
+
+    /* --- HUD LOGO --- */
+    .hud-logo {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        /* FIXED: Z-Index must be higher than body::after (999) to be visible */
+        z-index: 1001;
+        width: 65px;
+        height: auto;
+        opacity: 0.9; /* Increased visibility slightly */
+        transition: 0.3s all ease-in-out;
+        /* Orange glow to match the logo and theme */
+        filter: drop-shadow(0 0 5px rgba(245, 138, 7, 0.8));
+    }
+    .hud-logo img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+    .hud-logo:hover {
+        opacity: 1;
+        filter: drop-shadow(0 0 15px rgba(245, 138, 7, 1));
+        transform: scale(1.05);
+    }
+
+    /* --- THE CENTRAL CORE (Search) --- */
+    .core-system {
+        position: relative;
+        z-index: 10;
+        width: 400px;
+        text-align: center;
+    }
+
+    .core-circle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.1);
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        animation: spin 20s linear infinite;
+        box-shadow: 0 0 50px rgba(255, 255, 255, 0.05);
+    }
+    
+    .core-circle::before {
+        content: ''; position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff;
+    }
+
+    @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
+    .clock {
+        font-size: 3rem;
+        font-weight: bold;
+        text-shadow: 0 0 15px rgba(255,255,255,0.8);
+        margin-bottom: 10px;
+    }
+
+    .search-input {
+        background: rgba(0,0,0,0.5);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 10px 20px;
+        color: var(--neon-green);
+        font-family: inherit;
+        font-size: 1.1rem;
+        width: 100%;
+        text-align: center;
+        outline: none;
+        transition: 0.3s;
+        backdrop-filter: blur(5px);
+    }
+    .search-input:focus {
+        border-color: var(--neon-green);
+        box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+    }
+
+    /* --- THE ORBITAL STATIONS --- */
+    .station {
+        position: absolute;
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        backdrop-filter: blur(10px);
+        padding: 15px;
+        border-radius: 15px;
+        width: 60px; /* Collapsed Width */
+        height: 60px; /* Collapsed Height */
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .station-icon {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+        min-height: 40px;
+        display: flex; align-items: center; justify-content: center;
+        width: 100%;
+    }
+
+    .station-content {
+        opacity: 0;
+        width: 240px;
+        transition: 0.2s;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+    
+    .station h3 {
+        margin: 0 0 10px 0;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        padding-bottom: 5px;
+        width: 100%;
+        white-space: nowrap;
+    }
+
+    /* Header Link styling (MERIJN) */
+    .header-link {
+        text-decoration: none;
+        color: inherit;
+        transition: 0.2s;
+        display: block;
+        width: 100%;
+    }
+    .header-link:hover {
+        text-shadow: 0 0 10px currentColor;
+        letter-spacing: 1px;
+    }
+
+    .station:hover {
+        width: 270px;
+        height: auto;
+        min-height: 200px;
+        z-index: 20;
+        box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    }
+    
+    .station:hover .station-content {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* --- LINKS STYLING --- */
+    .link-btn {
+        display: block;
+        text-decoration: none;
+        color: #ccc;
+        font-size: 0.85rem;
+        padding: 6px;
+        border: 1px solid transparent;
+        transition: 0.2s;
+        background: rgba(255,255,255,0.05);
+    }
+    .link-btn:hover {
+        background: #fff;
+        color: #000;
+        font-weight: bold;
+        transform: translateX(5px);
+    }
+
+    .sub-header {
+        font-size: 0.7rem;
+        color: #aaa;
+        text-transform: uppercase;
+        margin-top: 5px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 5px;
+    }
+
+    /* --- GRIDS --- */
+    .tz-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+    .split-row { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+
+    .tz-btn {
+        background: rgba(0,0,0,0.5);
+        border: 1px solid #555;
+        color: #fff;
+        text-decoration: none;
+        font-size: 0.7rem;
+        padding: 5px 0;
+        transition: 0.2s;
+        border-radius: 3px;
+    }
+    .tz-btn:hover {
+        background: var(--neon-green);
+        color: #000;
+        border-color: var(--neon-green);
+        font-weight: bold;
+    }
+
+    /* --- POSITIONS --- */
+    /* NORTH: RESISTANCE (Green) */
+    #st-north {
+        top: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-color: var(--neon-green);
+        box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+    }
+    #st-north:hover { box-shadow: 0 0 20px var(--neon-green); }
+    #st-north h3 { color: var(--neon-green); }
+
+    /* WEST: PERSONAL (Orange) */
+    #st-west {
+        left: 8%;
+        top: 50%;
+        transform: translateY(-50%);
+        border-color: var(--neon-orange);
+        box-shadow: 0 0 10px rgba(245, 138, 7, 0.2);
+    }
+    #st-west:hover { box-shadow: 0 0 20px var(--neon-orange); }
+    #st-west h3 { color: var(--neon-orange); }
+
+    /* EAST: SCHOOL (Red) */
+    #st-east {
+        right: 8%;
+        top: 50%;
+        transform: translateY(-50%);
+        border-color: var(--neon-red);
+        box-shadow: 0 0 10px rgba(188, 0, 49, 0.2);
+    }
+    #st-east:hover { box-shadow: 0 0 20px var(--neon-red); }
+    #st-east h3 { color: var(--neon-red); }
+
+    /* SOUTH: WORK (Purple) */
+    #st-south {
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-color: var(--neon-purple);
+        box-shadow: 0 0 10px rgba(146, 141, 247, 0.2);
+        transform-origin: bottom center;
+    }
+    #st-south:hover { box-shadow: 0 0 20px var(--neon-purple); transform: translateX(-50%) translateY(-20px); }
+    #st-south h3 { color: var(--neon-purple); }
 
 
-		<title>Merijn Search</title>
-		<script defer src="https://cloud.umami.is/script.js" data-website-id="1a61f729-43e1-4b1e-afe6-883487b48bd0"></script>
-	</head>
-	<body onload="document.getElementById('searchInput').focus()">
-		<header>
-			<a href="https://mail.proton.me/u/0/inbox">Mail</a>
-			<a href="#links">Links</a>
-			<a href="#links">
-				<img id="products" src="products.png"/>
-			</a>
-			<a href="https://merijnvervoorn.com">
-				<img id="Merijn" class="headerpics" src="https://avatars.githubusercontent.com/u/161606054?v=4" width="32" height="32"/>
-			</a>
-		</header>
-		<div class="main">
-			<img src="merijn.png"/>
-			<form id="searchForm" name="unduck" role="search" action="https://unduck.link" method="GET"><br>
-				<input type="text" id="searchInput" class="search" name="q"><br><br>
-				<input type="submit" class="button" name="submit" value="Search">
-				<input type="submit" class="button" name="submit" value="I'm Feeling Purple">
-			</form>
-		</div>
-		<footer>
-			<a class="leftlinks" href="https://github.com/merijnvervoorn">Advertising</a>
-			<a class="leftlinks" href="https://merijnvervoorn.com/projects">Business</a>
-			<a class="leftlinks" href="https://merijnvervoorn.com/about">About</a>
-			<a class="rightlinks" href="https://github.com/merijnvervoorn/search">Settings</a>
-			<a class="rightlinks" href="https://unduck.link">Privacy & Terms</a>
-		</footer>
+    /* --- SATELLITES --- */
+    .satellite {
+        position: absolute;
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        border: 1px dashed #555;
+        display: flex; align-items: center; justify-content: center;
+        text-decoration: none;
+        color: #888;
+        transition: 0.3s;
+        z-index: 8;
+        background: rgba(0,0,0,0.5);
+        font-size: 1.1rem;
+    }
+    .satellite:hover { border-color: #fff; color: #fff; box-shadow: 0 0 15px #fff; transform: scale(1.2); }
+    
+    #sat-yt { top: 32%; left: 32%; border-color: #ff0000; color: #ff0000; } 
+    #sat-nf { top: 32%; right: 32%; border-color: #E50914; color: #E50914; } 
+    #sat-gh { bottom: 32%; right: 32%; border-color: #fff; color: #fff; font-size: 1.4rem; }
+    #sat-ir { bottom: 32%; left: 32%; border-color: #50a2ff; color: #50a2ff; }
 
-		
-		<div class="container">
-			<div class="row">
-			  <!-- First Column -->
-			  <div class="col-md-4" style="margin-bottom: 300px;">
-				<div class="content">
-				  <div>
-					<div class="header" id='links'>
-					  <div id="school-link" class="section">
-						<div class="text" style="text-align: left; line-height: 1px;">
-						  <p>
-								<a href="https://www.merijnvervoorn.com" target="_blank">
-								  <span class="bold-text" style="color: #928DF7; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: none; font-size: 50px;">MERIJN</span><span class="highlight" style="color: #F58A07; font-family: 'Source Sans 3', Arial; font-weight: 700; font-size: 50px;">.</span>
-								</a>
-							  </p>
-							  <p>
-								<a href="https://www.merijnvervoorn.com" target="_blank">
-								  <span class="gray-text" style="color: #2E294E; font-family: 'Open Sans', Arial; font-weight: 400; text-decoration: none; font-size: 28px;">Dat ben ik.</span>
-								</a>
-							  </p>
-						</div>
-					  </div>
-					</div>
+    /* Pulse Animation */
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    .satellite { animation: pulse 5s infinite ease-in-out; }
+    #sat-nf { animation-delay: 1s; }
+    #sat-gh { animation-delay: 2s; }
 
-					<div class="links">
-					  <div id="resources" class="section">
-						<div class="text">
-							<p>
-								<a href="https:nas.merijnvervoorn.com" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Drive</a>;
-								<a href="https://mail.proton.me/u/0/inbox" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Mail</a>;
-								<a href="https://calendar.proton.me/" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Calendar</a>;
-								<a href="https://nas.merijnvervoorn.com/photo/#/personal_space/timeline" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Photos</a>;
-							  </p>
-							  <p>
-								<a href="https://www.canva.com" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Canva</a>;
-								<a href="https://coolors.co" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Coolors</a>;
-							  </p>
-							  <p>
-								<a href="https://www.inoreader.com/all_articles" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Inoreader</a>;
-								<a href="https://www.youtube.com/feed/subscriptions" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Youtube</a>;
-								<a href="https://www.netflix.com/nl-en/login?nextpage=https%3A%2F%2Fwww.netflix.com%2Fbrowse%2Fmy-list" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Netflix</a>;
-							  </p>
-							  <p>
-								<a href="https://www.linkedin.com" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">LinkedIn</a>;
-								<a href="https://www.goodreads.com/" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Goodreads</a>;
-								<a href="https://letterboxd.com/" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Letterboxd</a>;
-							  </p>
-							  <p>
-								<a href="https://chat.openai.com" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">ChatGPT</a>;
-								<a href="https://www.deepl.com/en/translator?hl=en" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Translate</a>;
-								<a href="https://annas-archive.org/" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Books</a>;
-							  </p>
-							  <p>
-								<a href="https://hpanel.hostinger.com/" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Domains</a>;
-								<a href="https://eu.umami.is/dashboard" target="_blank" style="color: #F58A07; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Umami</a>;
-							  </p>
-						</div>
-					  </div>
-					</div>
-				  </div>
-				</div>
-			  </div>
+    @media (max-width: 800px) {
+        body { flex-direction: column; overflow-y: auto; height: auto; padding: 50px 0; }
+        /* Hide logo on small screens to save space */
+        .hud-logo { display: none; }
+        .core-system { margin-bottom: 50px; margin-top: 50px; }
+        .station { position: relative; top: auto; left: auto; right: auto; bottom: auto; transform: none !important; margin-bottom: 20px; width: 80%; height: auto; }
+        .station-content { opacity: 1; width: 100%; }
+        .station-icon { display: none; }
+        .satellite { display: none; }
+        .core-circle { display: none; }
+    }
 
+</style>
+</head>
+<body onload="document.getElementById('searchInput').focus()">
 
+    <a href="https://merijnvervoorn.com" class="hud-logo">
+        <img src="https://merijnvervoorn.com/static/logo/logo-anaerobic.png" alt="Merijn Logo">
+    </a>
 
-		  
-			  <!-- Second Column -->
-			  <div class="col-md-4" style="margin-bottom: 300px;">
-				<div class="content">
-				  <div>
-					<div class="header">
-					  <div id="school-link" class="section">
-						<div class="text" style="text-align: left; line-height: 1px;">
-						  <p>
-							<a href="https://www.uva.nl/" target="_blank">
-							  <span class="bold-text" style="color: #000000; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: none; font-size: 50px;">SCHOOL</span><span class="highlight" style="color: #bc0031; font-family: 'Source Sans 3', Arial; font-weight: 700; font-size: 50px;">.</span>
-							</a>
-						  </p>
-						  <p>
-							<a href="https://www.uva.nl/" target="_blank">
-							  <span class="gray-text" style="color: #808080; font-family: 'Open Sans', Arial; font-weight: 400; text-decoration: none; font-size: 28px;">Goed met toetsen.</span>
-							</a>
-						  </p>
-						</div>
-					  </div>
-					</div>
-		  
-					<div class="spacer"></div>
-		  
-					<div class="links">
-					  <div id="resources" class="section">
-						<div class="text">
-						  <p><a href="https://login.canvas.uva.nl" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Canvas</a>;</p>
-						  <p><a href="https://trello.com" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Trello</a>;</p>
-						  <p><a href="https://www.overleaf.com/project" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Overleaf</a>;</p>
-						  <p><a href="https://uva.eu.qualtrics.com" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Qualtrics</a>;
-							<a href="https://ds100.org/su23/" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">DS100</a>;</p>
-						  <p><a href="https://drive.google.com/drive/u/1/my-drive" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Drive</a>;
-							<a href="https://scholar.google.com/" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Scholar</a>;</p>
-						  <p><a href="https://www.office.com/apps" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Office</a>;
-							<a href="https://outlook.office.com/mail/" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Outlook</a>;</p>
-						</div>
-					  </div>
-					</div>
-				  </div>
-				</div>
-			  </div>
-		  
-			  <!-- Third Column -->
-		  <div class="col-md-4" style="margin-bottom: 300px;">
-			<div class="content">
-			  <div>
-				<div class="header">
-				  <div id="school-link" class="section">
-					<div class="text" style="text-align: left; line-height: 1px;">
-					  <p>
-						<a href="https://www.uva.nl/" target="_blank">
-						  <span class="bold-text" style="color: #000000; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: none; font-size: 50px;">WERK</span><span class="highlight" style="color: #bc0031; font-family: 'Source Sans 3', Arial; font-weight: 700; font-size: 50px;">.</span>
-						</a>
-					  </p>
-					  <p>
-						<a href="https://www.uva.nl/" target="_blank">
-						  <span class="gray-text" style="color: #808080; font-family: 'Open Sans', Arial; font-weight: 400; text-decoration: none; font-size: 28px;">Moet ook gebeuren.</span>
-						</a>
-					  </p>
-					</div>
-				  </div>
-				</div>
-	  
-				<div class="spacer"></div>
-	  
-				<div class="links">
-				  <div id="resources" class="section">
-					<div class="text">
-						<p>
-						<a href="https://justprepare.nl" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Just Prepare</a>;
-					  </p>
-					  					  <p>
-						<a href="https://notion.so" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Notion</a>;
-					</p>
-					
-					<p>
-						<a href="https://outlook.office.com/mail/" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Outlook</a>;
-					</p>
-					
-					 <p>
-						<a href="https://amsuni-my.sharepoint.com/my" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">OneDrive</a>;
-					</p>
-					  <p>
-						<a href="https://flp.sap.uva.nl/fiori?saml2idp=http://login.uva.nl/adfs/services/trust#Shell-home" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">Zelfbediening</a>;
-					</p>
-					  <p>
-						<a href="https://medewerker.uva.nl/fmg/az/a-z.html" target="_blank" class="link" style="color: #bc0031; font-family: 'Open Sans', Arial; font-weight: 700; text-decoration: underline;">UvA A-Z</a>;
-					</p>
-				</div>
-				  </div>
-				</div>
-			  </div>
-			</div>
-		  </div>
-		</div> 
-	</div>
+    <div class="core-system">
+        <div class="core-circle"></div>
+        <div class="clock" id="clock">00:00</div>
+        <form id="searchForm" name="unduck" role="search" action="https://unduck.link" method="GET">
+            <input type="text" id="searchInput" class="search-input" name="q" placeholder="INITIATE..." autocomplete="off">
+        </form>
+        <div style="margin-top:10px; font-size: 0.7rem; color: #666;">CMD: !g !gpt !r !m</div>
+    </div>
 
-		<script>
-		document.getElementById('searchForm').addEventListener('submit', function(event) {
-			var queryInput = document.querySelector('input[type="text"]');
-			var query = queryInput.value.trim();
+    <div class="station" id="st-north">
+        <div class="station-icon">🟢</div>
+        <div class="station-content">
+            <h3>RESISTANCE</h3>
+            <a href="https://annas-archive.org/" class="link-btn">Book Archive</a>
+            <a href="https://archive.org/" class="link-btn">Internet Archive</a>
+            <a href="https://oa.mg/" class="link-btn">OA.MG Research</a>
+            <a href="https://en.wikipedia.org/wiki/List_of_cognitive_biases" class="link-btn">List of Biases</a>
+            
+            <div class="sub-header">TRACKING</div>
+            <div class="split-row">
+                <a href="https://www.goodreads.com/" class="link-btn">Books</a>
+                <a href="https://letterboxd.com/" class="link-btn">Films</a>
+            </div>
+            
+            <div class="sub-header">TWILIGHT ZONE</div>
+            <div class="tz-grid">
+                <a href="https://archive.org/details/the-twilight-zone-1959-s-01-e-00-original-pilot/" class="tz-btn" title="Season 1">S1</a>
+                <a href="https://archive.org/details/the-twilight-zone-1959-s-02-e-11-the-night-of-the-meek" class="tz-btn" title="Season 2">S2</a>
+                <a href="https://archive.org/details/the-twilight-zone-1959-s-03-e-15-a-quality-of-mercy" class="tz-btn" title="Season 3">S3</a>
+                <a href="https://archive.org/details/the-twilight-zone-1959-s-04-e-16-on-thursday-we-leave-for-home" class="tz-btn" title="Season 4">S4</a>
+                <a href="https://archive.org/details/the-twilight-zone-1959-s-05-e-22-an-occurrence-at-owl-creek-bridge" class="tz-btn" title="Season 5">S5</a>
+            </div>
+        </div>
+    </div>
 
-			if (query.includes('!gpt')) {
-				event.preventDefault(); // Prevent normal form submission
-				var searchQuery = query.replace('!gpt', '').trim(); // Remove "!gpt" and trim spaces
-				window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(searchQuery)}`;
-			} else if (query.includes('!chat')) {
-				event.preventDefault(); // Prevent normal form submission
-				var searchQuery = query.replace('!chat', '').trim(); // Remove "!chat" and trim spaces
-				window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(searchQuery)}`;
-			} else if (query.includes('!p')) {
-				event.preventDefault(); // Prevent normal form submission
-				var searchQuery = query.replace('!p', '').trim(); // Remove "!p" and trim spaces
-				window.location.href = `https://www.perplexity.ai/?q=${encodeURIComponent(searchQuery)}`;
-			} else if (query.includes('!r')) {
-				event.preventDefault(); // Prevent normal form submission
-				var searchQuery = query.replace('!r', '').trim(); // Remove "!r" and trim spaces
-				window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(searchQuery)}+site%3Areddit.com`;
-			} else if (query.includes('!m')) {
-				event.preventDefault(); // Prevent normal form submission
-				var searchQuery = query.replace('!m', '').trim(); // Remove "!m" and trim spaces
-				window.location.href = `https://www.merijn.cc/${encodeURIComponent(searchQuery)}`;
-			} else if (query.includes('!')) {
-				this.action = 'https://unduck.link';
-				this.querySelector('input[type="submit"]').name = '';
-			}  else if (query.includes('https://')) {
-				event.preventDefault();
-				var url = query.split(' ')[0];
-				window.location.href = url;
-			} else if (query.includes('http://')) {
-				event.preventDefault();
-				var url = query.split(' ')[0];
-				window.location.href = url;
-			} else if (query.includes('.')) {
-				event.preventDefault();
-				var url = 'https://' + query.split(' ')[0];
-				window.location.href = url;
-			} else {
-				this.action = 'https://duckduckgo.com/';
-				this.querySelector('input[type="submit"]').name = '';
-			}
-		});
-		</script>
-	</body>
+    <div class="station" id="st-west">
+        <div class="station-icon">🟠</div>
+        <div class="station-content">
+            <h3><a href="https://merijnvervoorn.com" class="header-link">MERIJN</a></h3>
+            
+            <a href="https://mail.proton.me/u/0/inbox" class="link-btn">Proton Mail</a>
+            <a href="https://calendar.proton.me/" class="link-btn">Calendar</a>
+            <a href="https://nas.merijnvervoorn.com" class="link-btn">NAS Drive</a>
+            <a href="https://hpanel.hostinger.com/" class="link-btn">Hostinger</a>
+            <a href="https://eu.umami.is/dashboard" class="link-btn">Umami Stats</a>
+        </div>
+    </div>
+
+    <div class="station" id="st-east">
+        <div class="station-icon">🔴</div>
+        <div class="station-content">
+            <h3>SCHOOL</h3>
+            <a href="https://login.canvas.uva.nl" class="link-btn">Canvas</a>
+            <a href="https://www.overleaf.com/project" class="link-btn">Overleaf</a>
+            <a href="https://drive.google.com/drive/u/1/my-drive" class="link-btn">Google Drive</a>
+            <a href="https://www.office.com/apps" class="link-btn">Office</a>
+            <a href="https://uva.eu.qualtrics.com" class="link-btn">Qualtrics</a>
+            <a href="https://scholar.google.com/" class="link-btn">Google Scholar</a>
+        </div>
+    </div>
+
+    <div class="station" id="st-south">
+        <div class="station-icon">🟣</div>
+        <div class="station-content">
+            <h3><a href="https://justprepare.com" class="header-link">WORK</a></h3>
+            <a href="https://justprepare.nl" class="link-btn">Just Prepare</a>
+            <a href="https://notion.so" class="link-btn">Notion</a>
+            <a href="https://outlook.office.com/mail/" class="link-btn">Outlook Work</a>
+            <a href="https://flp.sap.uva.nl/fiori" class="link-btn">Zelfbediening</a>
+        </div>
+    </div>
+
+    <a href="https://www.youtube.com/feed/subscriptions" class="satellite" id="sat-yt" title="Subs Only">YT</a>
+    <a href="https://www.netflix.com/browse/my-list" class="satellite" id="sat-nf" title="My List">N</a>
+    <a href="https://github.com/merijnvervoorn" class="satellite" id="sat-gh" title="GitHub">GH</a>
+    <a href="https://www.inoreader.com/all_articles" class="satellite" id="sat-ir" title="Inoreader">INO</a>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            var queryInput = document.getElementById('searchInput');
+            var query = queryInput.value.trim();
+
+            if (query.includes('!gpt')) {
+                event.preventDefault();
+                window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(query.replace('!gpt', '').trim())}`;
+            } else if (query.includes('!r')) {
+                event.preventDefault();
+                window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query.replace('!r', '').trim())}+site%3Areddit.com`;
+            } else if (query.includes('!m')) {
+                event.preventDefault();
+                window.location.href = `https://www.merijn.cc/${encodeURIComponent(query.replace('!m', '').trim())}`;
+            } else if (query.includes('https://') || query.includes('http://')) {
+                event.preventDefault();
+                window.location.href = query.split(' ')[0];
+            } else if (query.includes('.') && !query.includes(' ')) {
+                event.preventDefault();
+                window.location.href = 'https://' + query;
+            } else {
+                this.action = 'https://duckduckgo.com/';
+            }
+        });
+    </script>
+
+</body>
 </html>
-
-
-

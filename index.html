@@ -596,9 +596,11 @@
             }
         }
 
-        // CHANGE: Delay the fetch until AFTER the page has loaded
+        // Wait until the page is 100% loaded, then wait another 0.5 seconds
         window.addEventListener('load', () => {
-            setTimeout(fetchLocation, 50);
+            setTimeout(() => {
+                fetchLocation();
+            }, 500); 
         });
 
         /* --- COCKPIT PHYSICS SCRIPT --- */

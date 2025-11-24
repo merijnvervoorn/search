@@ -135,6 +135,8 @@
         z-index: 10;
         width: 400px;
         text-align: center;
+        contain: layout style; /* Tells browser this element is stable */
+        content-visibility: visible;
     }
 
     .core-circle {
@@ -394,6 +396,11 @@
         100% { transform: translateY(0px) translateX(0px); }
     }
 
+    .station, .hud-logo {
+        content-visibility: auto;
+        contain-intrinsic-size: 60px 60px; /* Prevents layout shift */
+    }
+
     /* MOBILE OPTIMIZATION */
     @media (max-width: 800px) {
         body {
@@ -432,7 +439,7 @@
 
 </style>
 </head>
-<body onload="document.getElementById('searchInput').focus()">
+<body>
     <main>
     <!-- Matrix Rain Canvas (Hidden by default) -->
     <canvas id="matrixCanvas"></canvas>
@@ -475,7 +482,8 @@
         <!-- AUTO LOCATION -->
         <div class="location" id="location-display">LOC: ACQUIRING SIGNAL...</div>
         <form id="searchForm" name="unduck" role="search" action="https://unduck.link" method="GET">
-            <input type="text" id="searchInput" class="search-input" name="q" placeholder="INITIATE..." autocomplete="off">
+            <input type="text" id="searchInput" class="search-input" name="q" placeholder="INITIATE..." autocomplete="off" autofocus>
+            <script>document.getElementById('searchInput').focus();</script>
         </form>
         <!-- CLICKABLE CMD HINT -->
         <div class="cmd-hint" onclick="openCmdModal()">CMD: !g, !gpt, !gem, !r, !m</div>

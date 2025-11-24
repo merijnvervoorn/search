@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>COMMAND_INTERFACE // MERIJN</title>
+<meta name="description" content="Personal command interface and dashboard for Merijn.">
 <link rel="shortcut icon" type="image/png" href="https://merijnvervoorn.com/static/shape/bc-cir.png"/>
 
 <!-- PERFORMANCE: Preload main background -->
@@ -431,7 +432,7 @@
 </style>
 </head>
 <body onload="document.getElementById('searchInput').focus()">
-
+    <main>
     <!-- Matrix Rain Canvas (Hidden by default) -->
     <canvas id="matrixCanvas"></canvas>
 
@@ -781,6 +782,13 @@
             }
         });
     </script>
-
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
+    </script>
+    </main>
 </body>
 </html>

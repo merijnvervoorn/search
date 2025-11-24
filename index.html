@@ -24,15 +24,26 @@
         width: 100vw;
         overflow: hidden;
         background-color: #000;
-        background-image: url('https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fmedia.giphy.com%2Fmedia%2FfV5FG8TpqGcso%2Fgiphy.gif&f=1&nofb=1&ipt=f6a2b25c32a22fb464cf49f670de21a3a62353b698927353099e6689dbe5ccd0');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
+        
+        /* NEW: Dual Layer Parallax Background */
+        background-image: url('space-bg.png'), url('space-bg.gif'); 
+        background-repeat: repeat, repeat;
+        
+        /* ZOOMED IN: Layer 1 (Near) is large, Layer 2 (Far) is smaller */
+        background-size: 800px 800px, 400px 400px; 
+        
+        background-position: 0 0, 0 0;
+        /* Blend mode makes the stars look dense */
+        background-blend-mode: lighten;
+        
         font-family: 'Courier New', Courier, monospace;
         color: #fff;
         display: flex;
         justify-content: center;
         align-items: center;
+        
+        /* Added transform transition for !barrel command */
+        transition: transform 1s ease-in-out;
     }
 
     /* CRT Scanline Effect Overlay */
@@ -44,6 +55,34 @@
         background-size: 100% 2px, 3px 100%;
         pointer-events: none;
         z-index: 999;
+    }
+
+    /* --- MATRIX MODE --- */
+    #matrixCanvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        z-index: 1; /* Behind UI, above background color */
+        display: none;
+        pointer-events: none;
+    }
+
+    body.matrix-mode {
+        background-image: none !important; /* Hide stars */
+        background-color: #000 !important;
+    }
+    body.matrix-mode #matrixCanvas {
+        display: block;
+    }
+
+    /* --- STEALTH MODE (Hidden UI) --- */
+    body.stealth-mode .core-system,
+    body.stealth-mode .station,
+    body.stealth-mode .satellite-dock,
+    body.stealth-mode .hud-logo {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 1.5s ease-in-out;
     }
 
     /* --- HUD LOGO --- */
@@ -67,6 +106,7 @@
         z-index: 10;
         width: 400px;
         text-align: center;
+        transition: opacity 0.5s;
     }
 
     .core-circle {
@@ -90,7 +130,7 @@
         font-size: 3rem;
         font-weight: bold;
         text-shadow: 0 0 15px rgba(255,255,255,0.8);
-        margin-bottom: 5px; /* Reduced margin to fit location */
+        margin-bottom: 5px;
     }
 
     .location {
@@ -123,6 +163,84 @@
         box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
     }
 
+    /* UPDATED: CMD Hint Styling */
+    .cmd-hint {
+        margin-top: 15px;
+        font-size: 0.85rem;
+        color: #666; /* Grey */
+        letter-spacing: 2px;
+        font-weight: bold;
+        opacity: 0.9;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .cmd-hint:hover {
+        color: #888;
+        text-decoration: underline;
+        text-decoration-style: dotted;
+    }
+
+    /* --- COMMANDS MODAL --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        z-index: 2000;
+        display: none; /* Hidden by default */
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+    }
+    
+    .modal-content {
+        background: #111;
+        border: 1px solid #444;
+        width: 500px;
+        max-width: 90%;
+        padding: 30px;
+        position: relative;
+        box-shadow: 0 0 30px rgba(0,0,0,0.9);
+        color: #e0e0f0;
+        font-family: 'Courier New', monospace;
+        text-align: left;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 10px; right: 15px;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #666;
+    }
+    .modal-close:hover { color: #fff; }
+
+    .cmd-list {
+        margin-top: 15px;
+        border-top: 1px solid #333;
+        padding-top: 15px;
+    }
+    
+    .cmd-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    .cmd-code { color: var(--neon-green); font-weight: bold; }
+    .secret-code { color: var(--neon-purple); font-weight: bold; }
+    
+    .modal-link {
+        display: block;
+        margin-top: 20px;
+        color: #888;
+        text-align: center;
+        font-size: 0.8rem;
+        text-decoration: none;
+        border: 1px dashed #444;
+        padding: 10px;
+    }
+    .modal-link:hover { color: #fff; border-color: #fff; }
+
     /* --- THE ORBITAL STATIONS --- */
     .station {
         position: absolute;
@@ -134,7 +252,7 @@
         width: 60px; /* Collapsed Width */
         height: 60px; /* Collapsed Height */
         overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s;
         z-index: 5;
         display: flex;
         flex-direction: column;
@@ -149,12 +267,10 @@
         width: 100%;
     }
 
-    /* PLANET IMAGE STYLING (New) */
     .station-icon img {
         width: 55px;
         height: 55px;
         object-fit: contain;
-        /* Glows with the station's text color */
         filter: drop-shadow(0 0 5px currentColor);
         transition: transform 0.3s;
     }
@@ -192,15 +308,18 @@
     }
     .station:hover .station-content { opacity: 1; pointer-events: auto; }
     
-    /* Planet Spin Effect on Hover */
     .station:hover .station-icon img {
         transform: rotate(15deg) scale(1.1);
     }
 
-    /* FLIP RED AND PURPLE PLANETS HORIZONTALLY */
+    /* Flip Red & Purple Planets */
     #st-east .station-icon img,
     #st-south .station-icon img {
         transform: scaleX(-1);
+    }
+    #st-east:hover .station-icon img,
+    #st-south:hover .station-icon img {
+        transform: scaleX(-1) rotate(15deg) scale(1.1);
     }
 
     /* --- LINKS STYLING --- */
@@ -273,7 +392,7 @@
         display: flex; align-items: center; justify-content: center;
         text-decoration: none;
         color: #888;
-        transition: 0.3s;
+        transition: 0.3s, opacity 0.5s;
         z-index: 8;
         /* Fixed: Removed pulse to allow float to work correctly */
         animation: float 6s ease-in-out infinite;
@@ -302,19 +421,16 @@
         50% { transform: translateY(-18px) translateX(12px); }
         100% { transform: translateY(0px) translateX(0px); }
     }
-
     @keyframes float-nf {
         0% { transform: translateY(0px) translateX(0px); }
         50% { transform: translateY(-12px) translateX(-15px); }
         100% { transform: translateY(0px) translateX(0px); }
     }
-
     @keyframes float-gh {
         0% { transform: translateY(0px) translateX(0px); }
         50% { transform: translateY(-20px) translateX(8px); }
         100% { transform: translateY(0px) translateX(0px); }
     }
-
     @keyframes float-ir {
         0% { transform: translateY(0px) translateX(0px); }
         50% { transform: translateY(-10px) translateX(-18px); }
@@ -331,6 +447,7 @@
             height: auto;
             min-height: 100vh;
             padding-bottom: 50px;
+            background-position: center !important; /* Disable JS parallax on mobile */
         }
 
         .hud-logo { display: none; }
@@ -363,6 +480,36 @@
 </head>
 <body onload="document.getElementById('searchInput').focus()">
 
+    <!-- Matrix Rain Canvas (Hidden by default) -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- COMMANDS MODAL -->
+    <div class="modal-overlay" id="cmdModal" onclick="closeCmdModal(event)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('cmdModal').style.display='none'">&times;</span>
+            <h2 style="margin-top:0; color:#fff; text-transform:uppercase; border-bottom:2px solid #333; padding-bottom:10px;">System Protocols</h2>
+            
+            <div class="cmd-list">
+                <div style="color:#888; margin-bottom:10px; font-size:0.8rem;">// STANDARD BANGS</div>
+                <div class="cmd-row"><span class="cmd-code">!g</span> <span>Google Search</span></div>
+                <div class="cmd-row"><span class="cmd-code">!gpt</span> <span>Ask ChatGPT</span></div>
+                <div class="cmd-row"><span class="cmd-code">!r</span> <span>Search Reddit</span></div>
+                <div class="cmd-row"><span class="cmd-code">!m</span> <span>Go to Merijn.cc</span></div>
+            </div>
+
+            <div class="cmd-list">
+                <div style="color:#888; margin-bottom:10px; font-size:0.8rem;">// SECRET OVERRIDES</div>
+                <div class="cmd-row"><span class="secret-code">!warp</span> <span>Engage Hyperdrive</span></div>
+                <div class="cmd-row"><span class="secret-code">!matrix</span> <span>Hack System</span></div>
+                <div class="cmd-row"><span class="secret-code">!barrel</span> <span>Do a Barrel Roll</span></div>
+                <div class="cmd-row"><span class="secret-code">!stealth</span> <span>Hide UI</span></div>
+                <div class="cmd-row"><span class="secret-code">!reset</span> <span>System Reboot</span></div>
+            </div>
+
+            <a href="https://duckduckgo.com/bangs" target="_blank" class="modal-link">VIEW ALL 13,500+ DUCKDUCKGO BANGS</a>
+        </div>
+    </div>
+
     <a href="https://merijnvervoorn.com" class="hud-logo">
         <img src="https://merijnvervoorn.com/static/logo/logo-anaerobic.png" alt="Merijn Logo">
     </a>
@@ -370,14 +517,15 @@
     <div class="core-system">
         <div class="core-circle"></div>
         <div class="clock" id="clock">00:00</div>
-        <div class="location">LOC: ZOETERWOUDE, NL</div>
+        <!-- CHANGED: Default text indicates loading -->
+        <div class="location" id="location-display">LOC: ACQUIRING SIGNAL...</div>
         <form id="searchForm" name="unduck" role="search" action="https://unduck.link" method="GET">
             <input type="text" id="searchInput" class="search-input" name="q" placeholder="INITIATE..." autocomplete="off">
         </form>
-        <div style="margin-top:10px; font-size: 0.7rem; color: #666;">CMD: !g !gpt !r !m</div>
+        <!-- UPDATED HINT -->
+        <div class="cmd-hint" onclick="openCmdModal()">CMD: !g !gpt !r !m</div>
     </div>
 
-    <!-- NORTH STATION: RESISTANCE (Green Planet) -->
     <div class="station" id="st-north">
         <div class="station-icon">
             <img src="planet-green.png" alt="Resistance">
@@ -406,7 +554,6 @@
         </div>
     </div>
 
-    <!-- WEST STATION: MERIJN (Orange Planet) -->
     <div class="station" id="st-west">
         <div class="station-icon">
             <img src="planet-orange.png" alt="Merijn">
@@ -422,7 +569,6 @@
         </div>
     </div>
 
-    <!-- EAST STATION: SCHOOL (Red Planet) -->
     <div class="station" id="st-east">
         <div class="station-icon">
             <img src="planet-red.png" alt="School">
@@ -438,26 +584,24 @@
         </div>
     </div>
 
-    <!-- SOUTH STATION: WORK (Purple Planet) -->
     <div class="station" id="st-south">
         <div class="station-icon">
             <img src="planet-purple.png" alt="Work">
         </div>
         <div class="station-content">
-            <h3><a href="https://justprepare.com" class="header-link">WORK</a></h3>
+            <h3><a href="https://justprepare.nl" class="header-link">WORK</a></h3>
             <a href="https://justprepare.nl" class="link-btn">Just Prepare</a>
             <a href="https://notion.so" class="link-btn">Notion</a>
             <a href="https://outlook.office.com/mail/" class="link-btn">Outlook Work</a>
             <a href="https://flp.sap.uva.nl/fiori" class="link-btn">Zelfbediening</a>
         </div>
     </div>
-    <!-- SATELLITES -->
-    <!-- Wrapped in a container for better mobile layout control -->
+
     <div class="satellite-dock">
-        <a href="https://www.youtube.com/feed/subscriptions" class="satellite" id="sat-yt" title="YouTube">
+        <a href="https://www.youtube.com/feed/subscriptions" class="satellite" id="sat-yt" title="Subs Only">
             <img src="satellite-yt.png" alt="YT">
         </a>
-        <a href="https://www.netflix.com/browse/my-list" class="satellite" id="sat-nf" title="Netflix">
+        <a href="https://www.netflix.com/browse/my-list" class="satellite" id="sat-nf" title="My List">
             <img src="satellite-netflix.png" alt="Netflix">
         </a>
         <a href="https://github.com/merijnvervoorn" class="satellite" id="sat-gh" title="GitHub">
@@ -476,28 +620,211 @@
         setInterval(updateClock, 1000);
         updateClock();
 
+        /* --- AUTO LOCATION SCRIPT --- */
+        async function fetchLocation() {
+            const locElement = document.getElementById('location-display');
+            try {
+                // Free IP Geolocation API
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                
+                if (data.city && data.country_code) {
+                    locElement.innerText = `LOC: ${data.city.toUpperCase()}, ${data.country_code}`;
+                } else {
+                    locElement.innerText = 'LOC: UNKNOWN SECTOR';
+                }
+            } catch (error) {
+                // Fallback if offline or blocked
+                locElement.innerText = 'LOC: SIGNAL LOST';
+            }
+        }
+        fetchLocation();
+
+        /* --- COCKPIT PHYSICS SCRIPT (PASSIVE DRIFT + MOVEMENT) --- */
+        const state = {
+            x: 0, y: 0,
+            vx: 0, vy: 0,
+            keys: {}
+        };
+
+        // Passive drift: The ship is always slowly moving
+        const driftSpeedX = 0.15; // Moves slightly right
+        const driftSpeedY = -0.05; // Moves slightly up
+
+        window.addEventListener('keydown', e => { 
+            // Exit stealth mode on key press
+            if (document.body.classList.contains('stealth-mode')) {
+                document.body.classList.remove('stealth-mode');
+                return;
+            }
+            state.keys[e.key] = true; 
+        });
+        window.addEventListener('keyup', e => { state.keys[e.key] = false; });
+
+        /* NEW: SMART FOCUS HANDLER */
+        /* If search is empty and arrow keys are pressed, escape focus to fly */
+        document.getElementById('searchInput').addEventListener('keydown', function(e) {
+            if (this.value === '' && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault(); // Prevent cursor movement in input
+                this.blur(); // Remove focus from search bar
+                state.keys[e.key] = true; // Immediately register key for movement
+            }
+        });
+
+        function gameLoop() {
+            // Only accelerate if not typing in the search bar
+            if (document.activeElement.id !== 'searchInput') {
+                const acc = 0.5; // Acceleration factor
+                
+                // Use arrow keys to "turn" the ship (move background opposite direction)
+                if (state.keys.ArrowLeft) state.vx += acc;
+                if (state.keys.ArrowRight) state.vx -= acc;
+                if (state.keys.ArrowUp) state.vy += acc;
+                if (state.keys.ArrowDown) state.vy -= acc;
+            }
+
+            // Friction (Inertia)
+            state.vx *= 0.95;
+            state.vy *= 0.95;
+
+            // Update Position: Current position + Velocity + Passive Drift
+            state.x += state.vx + driftSpeedX;
+            state.y += state.vy + driftSpeedY;
+
+            // Apply 3D Parallax
+            // Layer 1 (Near): Moves at 100% speed
+            // Layer 2 (Far): Moves at 40% speed
+            document.body.style.backgroundPosition = 
+                `${state.x}px ${state.y}px, ${state.x * 0.4}px ${state.y * 0.4}px`;
+
+            requestAnimationFrame(gameLoop);
+        }
+        gameLoop();
+
+        /* --- MATRIX RAIN FUNCTION --- */
+        function startMatrix() {
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%';
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let x = 0; x < columns; x++) {
+                drops[x] = 1;
+            }
+
+            function drawMatrix() {
+                // Black background with opacity to create trails
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#39ff14'; // Matrix Green
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+                if(document.body.classList.contains('matrix-mode')) {
+                    requestAnimationFrame(drawMatrix);
+                }
+            }
+            drawMatrix();
+        }
+
+        /* --- MODAL LOGIC --- */
+        function openCmdModal() {
+            document.getElementById('cmdModal').style.display = 'flex';
+        }
+        
+        function closeCmdModal(e) {
+            if (e.target.id === 'cmdModal') {
+                document.getElementById('cmdModal').style.display = 'none';
+            }
+        }
+
+        /* --- SEARCH LOGIC & SECRET COMMANDS --- */
+        let currentRotation = 0; // Track rotation for barrel roll
+
         document.getElementById('searchForm').addEventListener('submit', function(event) {
             var queryInput = document.getElementById('searchInput');
-            var query = queryInput.value.trim();
+            var query = queryInput.value.trim().toLowerCase(); // Normalize for secret commands
 
-            if (query.includes('!gpt')) {
+            // SECRET COMMANDS
+            if (query === '!warp') {
                 event.preventDefault();
-                window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(query.replace('!gpt', '').trim())}`;
-            } else if (query.includes('!g')) {
+                state.vx = 100; // Massive boost
+                state.vy = 100;
+                queryInput.value = "HYPERDRIVE ENGAGED...";
+                setTimeout(() => { queryInput.value = ""; }, 2000);
+                return;
+            }
+
+            if (query === '!matrix') {
                 event.preventDefault();
-                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query.replace('!g', '').trim())}`;
-            } else if (query.includes('!r')) {
+                document.body.classList.add('matrix-mode');
+                document.documentElement.style.setProperty('--neon-orange', '#39ff14');
+                document.documentElement.style.setProperty('--neon-red', '#39ff14');
+                document.documentElement.style.setProperty('--neon-purple', '#39ff14');
+                document.documentElement.style.setProperty('--neon-green', '#39ff14');
+                queryInput.value = "SYSTEM HACKED.";
+                startMatrix();
+                setTimeout(() => { queryInput.value = ""; }, 2000);
+                return;
+            }
+
+            if (query === '!barrel') {
                 event.preventDefault();
-                window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query.replace('!r', '').trim())}+site%3Areddit.com`;
-            } else if (query.includes('!m')) {
+                currentRotation += 360; // Add 360 to current value to keep spinning forward
+                document.body.style.transform = `rotate(${currentRotation}deg)`;
+                queryInput.value = "";
+                return;
+            }
+
+            if (query === '!stealth') {
                 event.preventDefault();
-                window.location.href = `https://www.merijn.cc/${encodeURIComponent(query.replace('!m', '').trim())}`;
-            } else if (query.includes('https://') || query.includes('http://')) {
+                document.body.classList.add('stealth-mode');
+                queryInput.value = "";
+                return;
+            }
+            
+            if (query === '!reset') {
                 event.preventDefault();
-                window.location.href = query.split(' ')[0];
-            } else if (query.includes('.') && !query.includes(' ')) {
+                location.reload();
+                return;
+            }
+
+            // STANDARD SEARCH COMMANDS
+            // Use original casing for query parameters, but check logic against trimmed value
+            var originalQuery = queryInput.value.trim();
+            
+            if (originalQuery.includes('!gpt')) {
                 event.preventDefault();
-                window.location.href = 'https://' + query;
+                window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(originalQuery.replace('!gpt', '').trim())}`;
+            } else if (originalQuery.includes('!g')) {
+                event.preventDefault();
+                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(originalQuery.replace('!g', '').trim())}`;
+            } else if (originalQuery.includes('!r')) {
+                event.preventDefault();
+                window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(originalQuery.replace('!r', '').trim())}+site%3Areddit.com`;
+            } else if (originalQuery.includes('!m')) {
+                event.preventDefault();
+                window.location.href = `https://www.merijn.cc/${encodeURIComponent(originalQuery.replace('!m', '').trim())}`;
+            } else if (originalQuery.includes('https://') || originalQuery.includes('http://')) {
+                event.preventDefault();
+                window.location.href = originalQuery.split(' ')[0];
+            } else if (originalQuery.includes('.') && !originalQuery.includes(' ')) {
+                event.preventDefault();
+                window.location.href = 'https://' + originalQuery;
             } else {
                 this.action = 'https://duckduckgo.com/';
             }

@@ -46,7 +46,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        
+        will-change: background-position;
+
         /* Transform for !barrel command */
         transition: transform 1s ease-in-out;
     }
@@ -651,7 +652,11 @@
 
             requestAnimationFrame(gameLoop);
         }
-        gameLoop();
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                gameLoop();
+            }, 1500);
+        });
 
         /* --- MATRIX RAIN FUNCTION --- */
         function startMatrix() {

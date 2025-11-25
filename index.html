@@ -173,24 +173,82 @@
         font-weight: bold;
     }
 
+    /* --- SEARCH INPUT BASE STATE (Single Line) --- */
     .search-input {
         background: rgba(0,0,0,0.5);
         border: 1px solid var(--border-glass);
         border-radius: 20px;
-        padding: 10px 20px;
+        padding: 12px 20px;
         color: var(--neon-green);
         font-family: inherit;
         font-size: 1.1rem;
-        width: 100%;
         box-sizing: border-box;
         text-align: center;
         outline: none;
-        transition: 0.3s;
         backdrop-filter: blur(5px);
+        resize: none; 
+        line-height: 1.5;
+        display: block;
+
+        /* --- NEW/MODIFIED PROPERTIES --- */
+        width: 100%; /* Start at 100% of the 400px container */
+        height: 50px; /* Fixed height for exactly one line + padding */
+        overflow: hidden; /* Hide overflow initially */
+        
+        /* THE SMOOTH TRANSITION MAGIC */
+        /* We transition width, height, margins, and borders */
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
+
+    /* Focus Glow */
     .search-input:focus {
         border-color: var(--neon-green);
         box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+    }
+
+    /* --- EXPANDED STATE (Triggered by JS) --- */
+    .search-input.expanded {
+        /* Height: Approx 4 lines (around 140-150px based on line-height) */
+        height: 140px; 
+        
+        /* Width: 30% wider than base */
+        width: 130%;
+        
+        /* Centering Trick: Because it's wider than its parent, 
+        we shift it left by half the increased amount to keep it centered. 
+        (130% - 100%) / 2 = 15% shift. */
+        margin-left: -15%;
+        
+        /* Enable scrollbar only when in expanded state */
+        overflow-y: auto; 
+        
+        /* Optional: enhance glow when expanded */
+        box-shadow: 0 0 25px rgba(57, 255, 20, 0.4);
+    }
+
+    /* Custom Scrollbar styling (only visible in expanded state) */
+    .search-input::-webkit-scrollbar { width: 8px; }
+    .search-input::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 10px; }
+    .search-input::-webkit-scrollbar-thumb { background: rgba(57, 255, 20, 0.3); border-radius: 10px; }
+    .search-input::-webkit-scrollbar-thumb:hover { background: rgba(57, 255, 20, 0.6); }
+
+    /* --- THE GHOST (Hidden Measurement Tool) --- */
+    .search-ghost {
+        position: absolute;
+        visibility: hidden; /* Invisible */
+        pointer-events: none;
+        
+        /* Match .search-input styling EXACTLY for accurate measurement */
+        width: 100%; /* Always stays at container width (400px) */
+        padding: 12px 20px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.1rem;
+        line-height: 1.5;
+        box-sizing: border-box;
+        border: 1px solid transparent; /* Match border width of input */
+        white-space: pre-wrap; /* Mimic textarea wrapping */
+        word-wrap: break-word;
+        top: 0; left: 0; z-index: -100;
     }
 
     .cmd-hint {
@@ -482,7 +540,7 @@
         <!-- AUTO LOCATION -->
         <div class="location" id="location-display">LOC: ACQUIRING SIGNAL...</div>
         <form id="searchForm" name="unduck" role="search" action="https://unduck.link" method="GET">
-            <input type="text" id="searchInput" class="search-input" name="q" placeholder="INITIATE..." autocomplete="off" autofocus>
+            <textarea id="searchInput" class="search-input" name="q" placeholder="INITIATE..." rows="1" autofocus></textarea>
             <script>document.getElementById('searchInput').focus();</script>
         </form>
         <!-- CLICKABLE CMD HINT -->
@@ -664,6 +722,48 @@
             setTimeout(() => {
                 gameLoop();
             }, 1500);
+        });
+
+        /* --- AUTO-EXPAND STATE SWITCHER LOGIC (GHOST METHOD) --- */
+        const searchInput = document.getElementById('searchInput');
+        const expansionThreshold = 52; // Threshold for single line height
+
+        // 1. Create the Ghost Element in the DOM
+        const ghost = document.createElement('div');
+        ghost.classList.add('search-ghost');
+        // Append it to the .core-system container so it shares the same width context
+        document.querySelector('.core-system').appendChild(ghost);
+
+        function checkExpansionState() {
+            // 2. Sync Ghost content with Input content
+            // We add a zero-width space to ensure trailing newlines are calculated
+            const text = searchInput.value;
+            ghost.textContent = text; 
+            
+            // 3. Measure the GHOST, not the Input
+            // The ghost never changes width, so it won't flicker
+            if (ghost.scrollHeight > expansionThreshold) {
+                searchInput.classList.add('expanded');
+            } else {
+                searchInput.classList.remove('expanded');
+            }
+        }
+
+        // Attach listener
+        searchInput.addEventListener('input', checkExpansionState, false);
+
+        // Handle Enter Key
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); 
+                const event = new Event('submit', { cancelable: true });
+                document.getElementById('searchForm').dispatchEvent(event);
+            }
+        });
+
+        // Initial check
+        window.addEventListener('load', () => {
+            checkExpansionState();
         });
 
         /* --- MATRIX RAIN FUNCTION --- */

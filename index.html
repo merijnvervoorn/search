@@ -876,6 +876,9 @@
             } else if (originalQuery.includes('!chat')) {
                 event.preventDefault();
                 window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(originalQuery.replace('!chat', '').trim())}`;
+            } else if (originalQuery === '!gemini') {
+                event.preventDefault();
+                window.location.href = 'https://gemini.google.com/app';
             } else if (originalQuery.includes('!gem')) {
                 event.preventDefault();
                 window.location.href = `https://www.google.com/search?udm=50&source=searchlabs&q=${encodeURIComponent(originalQuery.replace('!gem', '').trim())}`;

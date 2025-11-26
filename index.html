@@ -175,7 +175,7 @@
 
     /* --- SEARCH INPUT BASE STATE (Single Line) --- */
     .search-input {
-        background: rgba(0,0,0,0.5);
+        background: rgba(0,0,0,0.05);
         border: 1px solid var(--border-glass);
         border-radius: 20px;
         padding: 12px 20px;
@@ -183,27 +183,37 @@
         font-family: inherit;
         font-size: 1.1rem;
         box-sizing: border-box;
-        text-align: center;
+        
+        /* UPDATED: Set alignment to left, but use indent to push text to center */
+        text-align: left; 
+        /* ~33% indent pushes "INITIATE..." to the visual center of the 400px box */
+        text-indent: 33%; 
+        
         outline: none;
         backdrop-filter: blur(5px);
         resize: none; 
         line-height: 1.5;
         display: block;
-
-        /* --- NEW/MODIFIED PROPERTIES --- */
-        width: 100%; /* Start at 100% of the 400px container */
-        height: 50px; /* Fixed height for exactly one line + padding */
-        overflow: hidden; /* Hide overflow initially */
+        width: 100%; 
+        height: 50px; 
+        overflow: hidden; 
         
-        /* THE SMOOTH TRANSITION MAGIC */
-        /* We transition width, height, margins, and borders */
-        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        
+        /* TRANSITION: Added text-indent to the transition list */
+        transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), text-indent 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
     /* Focus Glow */
     .search-input:focus {
         border-color: var(--neon-green);
         box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+    }
+
+    /* --- NEW RULE: SLIDE TO LEFT --- */
+    /* Triggers when the input has text inside it */
+    .search-input:not(:placeholder-shown) {
+        text-indent: 0; /* Slides text smoothly to the left */
+        padding-left: 20px; /* Maintains the original padding buffer */
     }
 
     /* --- EXPANDED STATE (Triggered by JS) --- */
@@ -213,6 +223,7 @@
         
         /* Width: 30% wider than base */
         width: 130%;
+        text-align: left;
         
         /* Centering Trick: Because it's wider than its parent, 
         we shift it left by half the increased amount to keep it centered. 
@@ -248,6 +259,7 @@
         border: 1px solid transparent; /* Match border width of input */
         white-space: pre-wrap; /* Mimic textarea wrapping */
         word-wrap: break-word;
+        text-align: left;
         top: 0; left: 0; z-index: -100;
     }
 
@@ -507,7 +519,10 @@
         <div class="modal-content">
             <span class="modal-close" onclick="document.getElementById('cmdModal').style.display='none'">&times;</span>
             <h2 style="margin-top:0; color:#fff; text-transform:uppercase; border-bottom:2px solid #333; padding-bottom:10px;">System Protocols</h2>
-            
+            <div class="cmd-list">
+                <div style="color:#888; margin-bottom:10px; font-size:0.8rem;">// PROTOCOLS</div>
+                <div class="cmd-row"><span class="cmd-code" style="color: var(--neon-orange); font-size: 1.3rem;">↑</span> <span>Show History</span></div>
+            </div>
             <div class="cmd-list">
                 <div style="color:#888; margin-bottom:10px; font-size:0.8rem;">// STANDARD BANGS</div>
                 <div class="cmd-row"><span class="cmd-code">!g</span> <span>Google Search</span></div>
@@ -544,7 +559,7 @@
             <script>document.getElementById('searchInput').focus();</script>
         </form>
         <!-- CLICKABLE CMD HINT -->
-        <div class="cmd-hint" onclick="openCmdModal()">CMD: !g, !gpt, !gem, !r, !m</div>
+        <div class="cmd-hint" onclick="openCmdModal()"><p>STATUS: ONLINE // TEMP:<span id="pill-temp">--°</span></p><div class="pill-dot"></div></div>
     </div>
 
     <!-- NORTH STATION -->
@@ -670,6 +685,36 @@
             }, 500); 
         });
 
+/* --- MINI PILL WEATHER ENGINE --- */
+async function initMiniPill() {
+    const pillTemp = document.getElementById('pill-temp');
+
+    try {
+        // 1. Get Location (Lat/Lon)
+        const locRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+        const locData = await locRes.json();
+
+        // 2. Get Weather
+        const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${locData.latitude}&longitude=${locData.longitude}&current=temperature_2m`;
+        const wRes = await fetch(wUrl);
+        const wData = await wRes.json();
+
+        // 3. Update DOM
+        if (wData.current) {
+            // Round to nearest whole number
+            pillTemp.innerText = Math.round(wData.current.temperature_2m) + "°C";
+        }
+    } catch (error) {
+        console.log("Weather Pill Error:", error);
+        pillTemp.innerText = "--"; 
+    }
+}
+
+// Run immediately on load
+window.addEventListener('load', initMiniPill);
+
+// Optional: Refresh every 15 minutes
+setInterval(initMiniPill, 900000);
         /* --- COCKPIT PHYSICS SCRIPT --- */
         const state = {
             x: 0, y: 0,
@@ -677,29 +722,46 @@
             keys: {}
         };
 
+        // Adjust drift speed here
         const driftSpeedX = 0.15; 
         const driftSpeedY = -0.05; 
 
+        // 1. GLOBAL KEY LISTENER
+        // continuously tracks which keys are held down
         window.addEventListener('keydown', e => { 
+            // Wake up if in stealth mode
             if (document.body.classList.contains('stealth-mode')) {
                 document.body.classList.remove('stealth-mode');
-                return;
             }
             state.keys[e.key] = true; 
         });
-        window.addEventListener('keyup', e => { state.keys[e.key] = false; });
 
-        /* SMART FOCUS HANDLER */
-        document.getElementById('searchInput').addEventListener('keydown', function(e) {
-            if (this.value === '' && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                e.preventDefault();
-                this.blur();
-                state.keys[e.key] = true;
-            }
+        window.addEventListener('keyup', e => { 
+            state.keys[e.key] = false; 
         });
 
+        /* SMART FOCUS HANDLER */
+        // This handles the Search Input specifically
+        const searchInputPhysics = document.getElementById('searchInput');
+        
+        searchInputPhysics.addEventListener('keydown', function(e) {
+            // ONLY Esc key removes focus
+            if (e.key === 'Escape') {
+                this.blur();
+                return;
+            }
+            
+            // Note: We removed the logic that auto-blurred on arrow keys.
+            // Now, arrow keys simply edit the text as normal.
+        });
+
+        /* PHYSICS ENGINE LOOP */
         function gameLoop() {
-            if (document.activeElement.id !== 'searchInput') {
+            // Check if user is typing
+            const isTyping = document.activeElement === searchInputPhysics;
+
+            // Only apply thrust if NOT typing
+            if (!isTyping) {
                 const acc = 0.5;
                 if (state.keys.ArrowLeft) state.vx += acc;
                 if (state.keys.ArrowRight) state.vx -= acc;
@@ -707,17 +769,23 @@
                 if (state.keys.ArrowDown) state.vy -= acc;
             }
 
+            // Apply Friction (always active so you glide to a stop)
             state.vx *= 0.95;
             state.vy *= 0.95;
 
+            // Apply Velocity + Drift
             state.x += state.vx + driftSpeedX;
             state.y += state.vy + driftSpeedY;
 
+            // Update Background Position
             document.body.style.backgroundPosition = 
                 `${state.x}px ${state.y}px, ${state.x * 0.4}px ${state.y * 0.4}px`;
 
             requestAnimationFrame(gameLoop);
         }
+
+        // START ENGINE
+        // (This ensures the movement starts after the page loads)
         window.addEventListener('load', () => {
             setTimeout(() => {
                 gameLoop();
@@ -867,6 +935,13 @@
                 return;
             }
 
+            if (query === '!help') {
+                event.preventDefault();
+                openCmdModal(); // Triggers the existing modal function
+                queryInput.value = ""; // Clears the search bar
+                return;
+            }
+
             // STANDARD SEARCH COMMANDS
             var originalQuery = queryInput.value.trim();
             
@@ -901,6 +976,47 @@
                 this.action = 'https://duckduckgo.com/';
             }
         });
+
+
+        /* --- COMMAND HISTORY LOGIC --- */
+        const historyKey = 'merijn_cmd_history';
+        let cmdHistory = JSON.parse(localStorage.getItem(historyKey)) || [];
+        let historyIndex = -1;
+
+        // 1. Save to History on Submit
+        document.getElementById('searchForm').addEventListener('submit', function() {
+            const val = document.getElementById('searchInput').value.trim();
+            if (val) {
+                // Remove duplicates of the same command to keep history clean
+                cmdHistory = cmdHistory.filter(cmd => cmd !== val);
+                cmdHistory.unshift(val); // Add to front
+                // Limit history to last 50 items
+                if (cmdHistory.length > 50) cmdHistory.pop(); 
+                localStorage.setItem(historyKey, JSON.stringify(cmdHistory));
+            }
+        });
+
+        // 2. Navigate History with Arrows
+        document.getElementById('searchInput').addEventListener('keydown', function(e) {
+            if (cmdHistory.length === 0) return;
+
+            if (e.key === 'ArrowUp') {
+                e.preventDefault(); // Stop cursor moving to start
+                historyIndex = Math.min(historyIndex + 1, cmdHistory.length - 1);
+                this.value = cmdHistory[historyIndex];
+                // Trigger the "slide left" visual effect manually if needed
+                this.classList.remove('expanded'); 
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                historyIndex = Math.max(historyIndex - 1, -1);
+                if (historyIndex === -1) {
+                    this.value = '';
+                } else {
+                    this.value = cmdHistory[historyIndex];
+                }
+            }
+        });
+        
     </script>
     <script>
         if ('serviceWorker' in navigator) {

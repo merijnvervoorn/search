@@ -654,6 +654,30 @@
     </div>
 
     <script>
+        /* --- CONSTANT MODE SETUP --- */
+        const urlParams = new URLSearchParams(window.location.search);
+        const isConstantMode = urlParams.get('mode') === 'constant' || window.location.pathname.includes('/constant');
+
+        if (isConstantMode) {
+            const base = document.createElement('base');
+            base.target = '_blank';
+            document.head.appendChild(base);
+            document.body.classList.add('constant-mode');
+        }
+
+        function navigate(url) {
+            if (isConstantMode) {
+                window.open(url, '_blank');
+                // Clear and defocus the search bar
+                const input = document.getElementById('searchInput');
+                input.value = ''; 
+                input.blur(); 
+            } else {
+                window.location.href = url;
+            }
+        }
+        
+        /* --- CLOCK SCRIPT --- */
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -891,11 +915,10 @@ setInterval(initMiniPill, 900000);
             var queryInput = document.getElementById('searchInput');
             var query = queryInput.value.trim().toLowerCase(); 
 
-            // SECRET COMMANDS
+            // SECRET COMMANDS (These stay on the current page)
             if (query === '!warp') {
                 event.preventDefault();
-                state.vx = 100;
-                state.vy = 100;
+                state.vx = 100; state.vy = 100;
                 queryInput.value = "HYPERDRIVE ENGAGED...";
                 setTimeout(() => { queryInput.value = ""; }, 2000);
                 return;
@@ -904,10 +927,9 @@ setInterval(initMiniPill, 900000);
             if (query === '!matrix') {
                 event.preventDefault();
                 document.body.classList.add('matrix-mode');
-                document.documentElement.style.setProperty('--neon-orange', '#39ff14');
-                document.documentElement.style.setProperty('--neon-red', '#39ff14');
-                document.documentElement.style.setProperty('--neon-purple', '#39ff14');
-                document.documentElement.style.setProperty('--neon-green', '#39ff14');
+                ['--neon-orange', '--neon-red', '--neon-purple', '--neon-green'].forEach(v => {
+                    document.documentElement.style.setProperty(v, '#39ff14');
+                });
                 queryInput.value = "SYSTEM HACKED.";
                 startMatrix();
                 setTimeout(() => { queryInput.value = ""; }, 2000);
@@ -916,7 +938,7 @@ setInterval(initMiniPill, 900000);
 
             if (query === '!barrel') {
                 event.preventDefault();
-                currentRotation += 360; // Continuous rotation
+                currentRotation += 360;
                 document.body.style.transform = `rotate(${currentRotation}deg)`;
                 queryInput.value = "";
                 return;
@@ -937,8 +959,8 @@ setInterval(initMiniPill, 900000);
 
             if (query === '!help') {
                 event.preventDefault();
-                openCmdModal(); // Triggers the existing modal function
-                queryInput.value = ""; // Clears the search bar
+                openCmdModal(); 
+                queryInput.value = "";
                 return;
             }
 
@@ -947,33 +969,43 @@ setInterval(initMiniPill, 900000);
             
             if (originalQuery.includes('!gpt')) {
                 event.preventDefault();
-                window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(originalQuery.replace('!gpt', '').trim())}`;
+                navigate(`https://chat.openai.com/?q=${encodeURIComponent(originalQuery.replace('!gpt', '').trim())}`);
             } else if (originalQuery.includes('!chat')) {
                 event.preventDefault();
-                window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(originalQuery.replace('!chat', '').trim())}`;
+                navigate(`https://chat.openai.com/?q=${encodeURIComponent(originalQuery.replace('!chat', '').trim())}`);
             } else if (originalQuery === '!gemini') {
                 event.preventDefault();
-                window.location.href = 'https://gemini.google.com/app';
+                navigate('https://gemini.google.com/app');
             } else if (originalQuery.includes('!gem')) {
                 event.preventDefault();
-                window.location.href = `https://www.google.com/search?udm=50&source=searchlabs&q=${encodeURIComponent(originalQuery.replace('!gem', '').trim())}`;
+                navigate(`https://www.google.com/search?udm=50&source=searchlabs&q=${encodeURIComponent(originalQuery.replace('!gem', '').trim())}`);
             } else if (originalQuery.includes('!g')) {
                 event.preventDefault();
-                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(originalQuery.replace('!g', '').trim())}`;
+                navigate(`https://www.google.com/search?q=${encodeURIComponent(originalQuery.replace('!g', '').trim())}`);
             } else if (originalQuery.includes('!r')) {
                 event.preventDefault();
-                window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(originalQuery.replace('!r', '').trim())}+site%3Areddit.com`;
+                navigate(`https://duckduckgo.com/?q=${encodeURIComponent(originalQuery.replace('!r', '').trim())}+site%3Areddit.com`);
             } else if (originalQuery.includes('!m')) {
                 event.preventDefault();
-                window.location.href = `https://www.merijn.cc/${encodeURIComponent(originalQuery.replace('!m', '').trim())}`;
+                navigate(`https://www.merijn.cc/${encodeURIComponent(originalQuery.replace('!m', '').trim())}`);
             } else if (originalQuery.includes('https://') || originalQuery.includes('http://')) {
                 event.preventDefault();
-                window.location.href = originalQuery.split(' ')[0];
+                navigate(originalQuery.split(' ')[0]);
             } else if (originalQuery.includes('.') && !originalQuery.includes(' ')) {
                 event.preventDefault();
-                window.location.href = 'https://' + originalQuery;
+                navigate('https://' + originalQuery);
             } else {
+                // DEFAULT FALLBACK (DuckDuckGo)
                 this.action = 'https://duckduckgo.com/';
+                
+                // NEW: Clear input if in Constant Mode
+                if (isConstantMode) {
+                    // Small delay ensures the form submits the text before we delete it
+                    setTimeout(() => {
+                        queryInput.value = '';
+                        queryInput.blur();
+                    }, 100);
+                }
             }
         });
 

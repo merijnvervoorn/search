@@ -979,9 +979,9 @@ setInterval(initMiniPill, 900000);
             } else if (originalQuery.includes('!gem')) {
                 event.preventDefault();
                 navigate(`https://www.google.com/search?udm=50&source=searchlabs&q=${encodeURIComponent(originalQuery.replace('!gem', '').trim())}`);
-            } else if (originalQuery.includes('!g')) {
+            } else if (originalQuery.includes('!gs')) {
                 event.preventDefault();
-                navigate(`https://www.google.com/search?q=${encodeURIComponent(originalQuery.replace('!g', '').trim())}`);
+                navigate(`https://scholar.google.com/scholar?q=${encodeURIComponent(originalQuery.replace('!gs', '').trim())}`);
             } else if (originalQuery.includes('!r')) {
                 event.preventDefault();
                 navigate(`https://duckduckgo.com/?q=${encodeURIComponent(originalQuery.replace('!r', '').trim())}+site%3Areddit.com`);

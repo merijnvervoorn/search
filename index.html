@@ -253,7 +253,7 @@
 				background-color: #1a1a1a;
 				border-radius: 4vh !important;
 				width: 65vh !important; 
-				height: 85vh !important; 
+				height: 70vh !important; 
 				display: flex !important;
 				justify-content: center !important;
 				align-items: center !important;
@@ -262,12 +262,12 @@
 				box-shadow: 0 2vh 8vh rgba(0,0,0,0.9);
 			}
 			.flip-card span {
-				font-family: 'Helvetica Neue', Arial, sans-serif;
+				font-family: 'Helvetica', Arial, sans-serif;
 				font-size: 60vh !important; 
-				font-weight: 700;
+				font-weight: 600 !important;
 				color: #d8d8d8; 
 				letter-spacing: -1vh;
-				line-height: 85vh !important; 
+				line-height: 70vh !important; 
 				user-select: none;
 				text-align: center !important;
 				display: block !important;
@@ -288,13 +288,13 @@
 				.flip-clock { gap: 3vw !important; }
 				.flip-card { 
 					width: 45vw !important; 
-					height: 60vw !important; 
+					height: 45vw !important; 
 					border-radius: 3vw !important;
 					box-shadow: 0 2vw 6vw rgba(0,0,0,0.9);
 				}
 				.flip-card span { 
-					font-size: 48vw !important; 
-					line-height: 60vw !important; 
+					font-size: 40vw !important; 
+					line-height: 45vw !important; 
 					letter-spacing: -0.5vw; 
 				}
 				.flip-card::after { height: 1.2vw !important; }
@@ -415,7 +415,7 @@
 					document.getElementById('searchInput').focus();
 				}
 				clearTimeout(timeout);
-				timeout = setTimeout(triggerScreensaver, 30000); // 120,000 ms = 2 minutes
+				timeout = setTimeout(triggerScreensaver, 1000); // 120,000 ms = 2 minutes
 			}
 
 			setInterval(updateTime, 1000);

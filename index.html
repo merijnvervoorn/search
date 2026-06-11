@@ -30,7 +30,7 @@
 				display: flex !important;
 				align-items: center !important;
 			}
-			
+
             /* IRONCLAD ISOLATION: Forces style.css to ignore our new layout */
             div.main, div.logo-container, div.search-box, div.buttons, div.search-ghost,
             div#screensaver, div.flip-clock, div.flip-card,
@@ -406,28 +406,42 @@
         });
 
         // --- Local App Launch & Popup Logic ---
-        const appsData = [
-            { name: 'Proton', url: 'https://mail.proton.me/u/0/inbox', icon: 'fas fa-envelope', aliases: ['mail', 'email', 'protonmail'] },
-            { name: 'Calendar', url: 'https://outlook.live.com/calendar/view/month', icon: 'fas fa-calendar-alt', aliases: ['agenda', 'planning'] },
-            { name: 'NAS', url: 'https://nas.merijn.cc', icon: 'fas fa-server', aliases: ['server', 'storage'] },
-            { name: 'Verflix+', url: 'https://verflix.merijn.cc', icon: 'fas fa-play-circle', aliases: ['movies', 'series', 'plex', 'video'] },
-            { name: 'Hostinger', url: 'https://hpanel.hostinger.com/', icon: 'fas fa-cloud', aliases: ['hosting', 'panel', 'website'] },
-            { name: 'Umami', url: 'https://cloud.umami.is/analytics/eu/websites', icon: 'fas fa-chart-pie', aliases: ['analytics', 'stats'] },
-            { name: 'YouTube', url: 'https://www.youtube.com/feed/subscriptions', icon: 'fab fa-youtube', aliases: ['yt', 'video'] },
-            { name: 'Netflix', url: 'https://www.netflix.com/browse/my-list', icon: 'fas fa-tv', aliases: ['movies', 'series'] },
-            { name: 'GitHub', url: 'https://github.com/merijnvervoorn', icon: 'fab fa-github', aliases: ['git', 'code', 'repo'] },
-            { name: 'Canvas', url: 'https://login.canvas.uva.nl', icon: 'fas fa-graduation-cap', aliases: ['uva', 'school', 'study'] },
-            { name: 'Overleaf', url: 'https://www.overleaf.com/project', icon: 'fas fa-leaf', aliases: ['latex', 'editor', 'paper'] },
-            { name: 'Drive', url: 'https://drive.google.com/drive/u/1/my-drive', icon: 'fab fa-google-drive', aliases: ['google drive', 'cloud', 'files'] },
-            { name: 'Office', url: 'https://www.office.com/apps', icon: 'fab fa-microsoft', aliases: ['word', 'excel', 'microsoft'] },
-            { name: 'Scholar', url: 'https://scholar.google.com/', icon: 'fas fa-user-graduate', aliases: ['papers', 'research', 'google scholar'] },
-            { name: 'Prepare', url: 'https://justprepare.nl', icon: 'fas fa-tasks', aliases: ['tasks', 'todo'] },
-            { name: 'Outlook', url: 'https://outlook.office.com/mail/', icon: 'fas fa-envelope-open-text', aliases: ['mail', 'uva mail', 'work mail'] },
-            { name: 'Personeel', url: 'https://flp.sap.uva.nl/fiori?saml2idp=http://login.uva.nl/adfs/services/trust#Shell-home', icon: 'fas fa-briefcase', aliases: ['uva', 'work', 'sap', 'fiori'] },
+		const appsData = [
             { name: 'Archive', url: 'https://archive.org/', icon: 'fas fa-university', aliases: ['wayback', 'internet archive'] },
+            { name: 'Calendar', url: 'https://outlook.live.com/calendar/view/month', icon: 'fas fa-calendar-alt', aliases: ['agenda', 'planning'] },
+            { name: 'Canva', url: 'https://www.canva.com/', icon: 'fas fa-paint-brush', aliases: ['design'] },
+            { name: 'Canvas', url: 'https://login.canvas.uva.nl', icon: 'fas fa-graduation-cap', aliases: ['uva', 'school', 'study'] },
+            { name: 'Drive', url: 'https://drive.google.com/drive/u/1/my-drive', icon: 'fab fa-google-drive', aliases: ['google drive', 'cloud', 'files'] },
+            { name: 'GitHub', url: 'https://github.com/merijnvervoorn', icon: 'fab fa-github', aliases: ['git', 'code', 'repo'] },
             { name: 'Goodreads', url: 'https://www.goodreads.com/', icon: 'fab fa-goodreads', aliases: ['books', 'reading'] },
-            { name: 'Letterboxd', url: 'https://letterboxd.com/', icon: 'fas fa-film', aliases: ['movies', 'reviews', 'film'] }
+            { name: 'Hostinger', url: 'https://hpanel.hostinger.com/', icon: 'fas fa-cloud', aliases: ['hosting', 'panel', 'website'] },
+            { name: 'Letterboxd', url: 'https://letterboxd.com/', icon: 'fas fa-film', aliases: ['movies', 'reviews', 'film'] },
+            { name: 'NAS', url: 'https://nas.merijn.cc', icon: 'fas fa-server', aliases: ['server', 'storage'] },
+            { name: 'Netflix', url: 'https://www.netflix.com/browse/my-list', icon: 'fas fa-tv', aliases: ['movies', 'series'] },
+            { name: 'Office', url: 'https://www.office.com/apps', icon: 'fab fa-microsoft', aliases: ['word', 'excel', 'microsoft'] },
+            { name: 'Outlook', url: 'https://outlook.office.com/mail/', icon: 'fas fa-envelope-open-text', aliases: ['mail', 'uva mail', 'work mail'] },
+            { name: 'Overleaf', url: 'https://www.overleaf.com/project', icon: 'fas fa-leaf', aliases: ['latex', 'editor', 'paper'] },
+            { name: 'Personeel', url: 'https://flp.sap.uva.nl/fiori?saml2idp=http://login.uva.nl/adfs/services/trust#Shell-home', icon: 'fas fa-briefcase', aliases: ['uva', 'work', 'sap', 'fiori'] },
+            { name: 'Prepare', url: 'https://justprepare.nl', icon: 'fas fa-tasks', aliases: ['tasks', 'todo'] },
+            { name: 'Proton', url: 'https://mail.proton.me/u/0/inbox', icon: 'fas fa-envelope', aliases: ['mail', 'email', 'protonmail'] },
+            { name: 'Scholar', url: 'https://scholar.google.com/', icon: 'fas fa-user-graduate', aliases: ['papers', 'research', 'google scholar'] },
+            { name: 'Umami', url: 'https://cloud.umami.is/analytics/eu/websites', icon: 'fas fa-chart-pie', aliases: ['analytics', 'stats'] },
+            { name: 'Verflix+', url: 'https://verflix.merijn.cc', icon: 'fas fa-play-circle', aliases: ['movies', 'series', 'plex', 'video'] },
+            { name: 'YouTube', url: 'https://www.youtube.com/feed/subscriptions', icon: 'fab fa-youtube', aliases: ['yt', 'video'] }
         ];
+
+		// --- Fetch merijn.cc Links ---
+        let merijnLinks = {};
+        let linksKeys = [];
+
+        fetch('https://merijn.cc/links.json')
+            .then(response => response.json())
+            .then(data => {
+                merijnLinks = data;
+                linksKeys = Object.keys(data).filter(k => k.trim() !== ''); // Exclude the empty root key
+            })
+            .catch(err => console.error('Could not load links.json:', err));
+
 
         const appPopup = document.getElementById('app-popup');
         let filteredApps = [];
@@ -435,32 +449,69 @@
 
         function renderAppPopup(query) {
             appPopup.innerHTML = '';
-            if (!query.startsWith('@')) {
+            let popupMode = null;
+
+            if (query.startsWith('@')) {
+                popupMode = '@';
+                const searchTerm = query.substring(1).toLowerCase();
+                filteredApps = appsData.filter(app => {
+                    const matchName = app.name.toLowerCase().includes(searchTerm);
+                    const matchAlias = app.aliases ? app.aliases.some(alias => alias.toLowerCase().includes(searchTerm)) : false;
+                    return matchName || matchAlias;
+                });
+            } else if (query.toLowerCase().startsWith('!m ')) {
+                popupMode = '!m';
+                const searchTerm = query.substring(3).toLowerCase();
+                
+                // 1. Find all matching keys
+                const matchingKeys = linksKeys.filter(key => key.toLowerCase().includes(searchTerm));
+                
+                // 2. Group the matching keys by their destination URL
+                const groupedLinks = {};
+                matchingKeys.forEach(key => {
+                    const url = merijnLinks[key];
+                    if (!groupedLinks[url]) {
+                        groupedLinks[url] = [];
+                    }
+                    groupedLinks[url].push(key);
+                });
+
+                // 3. Map the grouped URLs to the filteredApps array
+                filteredApps = Object.entries(groupedLinks).slice(0, 100).map(([url, keys]) => ({
+                    name: keys.join(', '), // Combines aliases like: "coalitie, coalition-predictor"
+                    url: url,
+                    icon: 'fas fa-link' 
+                }));
+            } else {
                 appPopup.classList.remove('show');
                 return;
             }
-            
-            const searchTerm = query.substring(1).toLowerCase();
-            
-            // Filter by name OR aliases
-            filteredApps = appsData.filter(app => {
-                const matchName = app.name.toLowerCase().includes(searchTerm);
-                const matchAlias = app.aliases ? app.aliases.some(alias => alias.toLowerCase().includes(searchTerm)) : false;
-                return matchName || matchAlias;
-            });
             
             if (filteredApps.length === 0) {
                 appPopup.classList.remove('show');
                 return;
             }
 
-            popupSelectedIndex = 0; // Reset to top when typing changes
+            popupSelectedIndex = 0;
+            appPopup.dataset.mode = popupMode; // Save mode for Tab completion
 
             filteredApps.forEach((app, index) => {
                 const item = document.createElement('a');
                 item.href = app.url;
                 item.className = 'popup-item' + (index === 0 ? ' selected' : '');
-                item.innerHTML = `<i class="${app.icon}"></i><span>${app.name}</span>`;
+                
+                // Add a subtitle for !m links to show the destination URL
+                if (popupMode === '!m') {
+                    item.innerHTML = `
+                        <i class="${app.icon}"></i>
+                        <span style="display: flex; flex-direction: column; text-align: left; width: 100%; overflow: hidden;">
+                            <span style="font-size: 14px; color: #202124; line-height: 1.2; padding-bottom: 3px;">${app.name}</span>
+                            <span style="font-size: 11px; color: #70757a; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${app.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+                        </span>`;
+                } else {
+                    item.innerHTML = `<i class="${app.icon}"></i><span>${app.name}</span>`;
+                }
+
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     window.location.href = app.url;
@@ -546,7 +597,11 @@
                     return;
                 } else if (e.key === 'Tab') {
                     e.preventDefault();
-                    this.value = '@' + filteredApps[popupSelectedIndex].name + ' ';
+                    if (appPopup.dataset.mode === '@') {
+                        this.value = '@' + filteredApps[popupSelectedIndex].name + ' ';
+                    } else if (appPopup.dataset.mode === '!m') {
+                        this.value = '!m ' + filteredApps[popupSelectedIndex].name + ' ';
+                    }
                     checkExpansionState();
                     return;
                 } else if (e.key === 'Enter' && !e.shiftKey) {
@@ -615,6 +670,16 @@
                 event.preventDefault(); window.location.href = `https://www.perplexity.ai/?q=${encodeURIComponent(query.replace('!p', '').trim())}`;
             } else if (lQuery.includes('!r')) {
                 event.preventDefault(); window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query.replace('!r', '').trim())}+site%3Areddit.com`;
+            } else if (lQuery.startsWith('!m ')) { 
+                event.preventDefault(); 
+                const linkKey = query.substring(3).trim().toLowerCase();
+                // Check if it exists in the fetched JSON first
+                if (merijnLinks[linkKey]) {
+                    window.location.href = merijnLinks[linkKey];
+                } else {
+                    // Fallback if not found in JSON
+                    window.location.href = `https://www.merijn.cc/${encodeURIComponent(linkKey)}`;
+                }
             } else if (lQuery.includes('!m')) {
                 event.preventDefault(); window.location.href = `https://www.merijn.cc/${encodeURIComponent(query.replace('!m', '').trim())}`;
             } else if (lQuery === '!barrel') {

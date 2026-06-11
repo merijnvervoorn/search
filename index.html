@@ -1,555 +1,640 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Merijn Search</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Merijn Search</title>
 
-		<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-		
-		<link rel="preload" as="image" href="merijn.png">
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+        <link rel="preload" as="image" href="merijn.png">
+        <link rel="shortcut icon" type="image/png" href="favi.png"/>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+        <link rel="dns-prefetch" href="https://duckduckgo.com">
 
-		<link rel="shortcut icon" type="image/png" href="favi.png"/>
-		<link rel="stylesheet" type="text/css" href="style.css">
-		
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="1a61f729-43e1-4b1e-afe6-883487b48bd0"></script>
+        
+        <style>
+            /* CSS RESET: Eliminates browser default margins */
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #ffffff;
+                overflow: hidden; 
+            }
 
-		<link rel="dns-prefetch" href="https://duckduckgo.com">
-
-		<script defer src="https://cloud.umami.is/script.js" data-website-id="1a61f729-43e1-4b1e-afe6-883487b48bd0"></script>
-		
-		<style>
-			/* CSS RESET: Eliminates browser default margins */
-			html, body {
-				margin: 0;
-				padding: 0;
-				width: 100%;
-				height: 100%;
-				background-color: #ffffff;
-				overflow: hidden; 
-			}
-
-			/* IRONCLAD ISOLATION: Forces style.css to ignore our new layout */
-			div.main, div.logo-container, div.search-box, div.buttons, div.search-ghost,
-			div#screensaver, div.flip-clock, div.flip-card,
-			div#apps-menu, div.apps-scroll-container, div.app-grid, div.app-item {
-				padding-top: 0 !important;
-				margin: 0 !important;
-			}
-
-			/* Perfect Absolute Centering for Main Content */
-			.main {
-				position: absolute !important;
-				top: 45% !important; 
-				left: 50% !important;
-				transform: translate(-50%, -50%) !important;
-				width: 100% !important;
-				height: auto !important;
-				display: flex !important;
-				flex-direction: column !important;
-				align-items: center !important;
-				justify-content: center !important;
-			}
-
-			/* Apps Menu Aesthetic */
-			#apps-menu {
-				display: none;
-				position: absolute !important;
-				top: 56px !important;
-				right: 20px !important;
-				width: 320px;
-				background: #ffffff;
-				border: 1px solid #dadce0;
-				border-radius: 16px;
-				box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-				padding: 16px 8px !important;
-				z-index: 9999;
-				font-family: Roboto, Arial, sans-serif;
-				will-change: transform, opacity;
-			}
-			#apps-menu.show { display: block; }
-			
-			.apps-scroll-container { max-height: 420px; overflow-y: auto; padding: 0 8px !important; }
-			.apps-scroll-container::-webkit-scrollbar { width: 6px; }
-			.apps-scroll-container::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
-			
-			.app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
-			
-			#apps-menu .app-item {
-				display: flex !important; flex-direction: column !important; align-items: center !important;
-				padding: 14px 4px !important; border-radius: 8px; text-decoration: none !important;
-				transition: background-color 0.15s ease;
-			}
-			#apps-menu .app-item:hover { background-color: #e8f0fe !important; }
-			#apps-menu .app-item i { font-size: 24px; color: #5f6368; margin-bottom: 8px !important; transition: color 0.15s ease; }
-			#apps-menu .app-item:hover i { color: #1a73e8; }
-			#apps-menu .app-item span { font-size: 13px !important; color: #3c4043 !important; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
-			
-			.apps-divider { height: 1px; background-color: #e8eaed; margin: 12px 12px !important; border: none; }
-
-			/* --- DYNAMIC SEARCH PILL --- */
-			.search-box {
-				position: relative;
-				width: 100%;
+			/* --- HEADER ALIGNMENT FIX --- */
+			header {
 				display: flex !important;
 				align-items: center !important;
-				border: 1px solid #dfe1e5;
-				border-radius: 24px;
-				padding: 0 14px !important;
-				min-height: 46px;
-				
-				/* Force transparent so pseudo-elements handle the layering perfectly */
-				background: transparent !important; 
-				
-				isolation: isolate; 
-				z-index: 1;
-				
-				transition: border-radius 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
-							padding 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-							box-shadow 0.2s ease, border-color 0.2s ease;
 			}
+			
+            /* IRONCLAD ISOLATION: Forces style.css to ignore our new layout */
+            div.main, div.logo-container, div.search-box, div.buttons, div.search-ghost,
+            div#screensaver, div.flip-clock, div.flip-card,
+            div#apps-menu, div.apps-scroll-container, div.app-grid, div.app-item {
+                padding-top: 0 !important;
+                margin: 0 !important;
+            }
 
-			.search-box:hover, .search-box:focus-within {
-				box-shadow: 0 1px 6px rgba(32,33,36,0.28);
-				border-color: rgba(223,225,229,0);
-			}
-
-			/* 1. Solid White Inner Box (Blocks the blur from bleeding inward) */
-			.search-box::after {
-				content: "";
+            /* Dynamic Greeting */
+			#greeting {
 				position: absolute;
-				inset: 0;
-				background: #ffffff;
-				border-radius: inherit;
-				z-index: -1; 
-			}
-
-			/* 2. The Multi-Colored Glowing Shadow */
-			.search-box::before {
-				content: "";
-				position: absolute;
-				inset: 0; 
-				border-radius: inherit;
-				background: linear-gradient(90deg, #4285f4, #db4437, #f4b400, #0f9d58, #4285f4);
-				background-size: 400% 100%;
-				
-				/* Pushed strictly BEHIND the white ::after layer */
-				z-index: -2; 
-				
-				opacity: 0;
-				pointer-events: none;
-				filter: blur(14px); 
-			}
-
-			/* Expanded State adjustments */
-			.search-box.expanded {
-				align-items: flex-start !important;
-				padding-top: 16px !important;
-				padding-bottom: 16px !important;
-				border-radius: 16px; 
-				border-color: #dfe1e5; 
-				box-shadow: 0 6px 16px rgba(32,33,36,0.18); 
-			}
-
-			/* Trigger the glowing shadow when expanded */
-			.search-box.expanded::before {
-				animation: 
-					chaseShadow 3s linear, 
-					fadeShadowOut 0.5s ease 2s forwards;
-			}
-
-			@keyframes chaseShadow {
-				0%   { opacity: 0.6; background-position: 0% 50%; }
-				100% { opacity: 0.6; background-position: 100% 50%; }
-			}
-
-			@keyframes fadeShadowOut {
-				from { opacity: 0.6; }
-				to   { opacity: 0; }
-			}
-
-			/* --- ICONS & INPUT --- */
-			.search-icon { 
-				width: 20px; 
-				height: 20px; 
-				fill: #9aa0a6; 
-				margin-right: 10px !important; 
-				flex-shrink: 0; 
-				transition: margin 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); 
-			}
-			.search-box.expanded .search-icon { margin-top: 2px !important; }
-
-			#searchInput {
-				flex-grow: 1;
-				border: none;
-				outline: none;
-				font-size: 16px;
-				background: transparent;
-				resize: none;
-				overflow: hidden;
-				line-height: 22px;
-				height: 22px; 
-				padding: 0 !important;
-				margin: 0 !important;
+				top: 20px;
+				left: 30px;
 				font-family: Arial, sans-serif;
-				transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-			}
-			#searchInput.expanded {
-				overflow-y: auto;
-			}
-
-			#searchInput::-webkit-scrollbar { width: 6px; }
-			#searchInput::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
-
-			.search-ghost {
-				position: absolute;
-				visibility: hidden;
-				pointer-events: none;
-				font-family: Arial, sans-serif;
-				font-size: 16px;
-				line-height: 22px;
-				white-space: pre-wrap;
-				word-wrap: break-word;
-				top: 0; left: 0; z-index: -100;
-			}
-
-			/* Footer Styles Update */
-			footer {
-				position: absolute !important;
-				bottom: 0 !important;
-				left: 0 !important;
-				right: 0 !important;
-				display: flex !important;
-				justify-content: center !important; 
-				gap: 30px !important;
-				padding: 20px 0 !important;
-				background: #f3f3f3;
-				border-top: 1px solid #e9e9e9;
-			}
-			footer a { margin: 0 !important; padding: 0 !important; }
-
-			/* --- FULLSCREEN FLIP CLOCK (MAXIMUM OVERDRIVE CARDS + SAFE TEXT) --- */
-			#screensaver {
-				position: fixed !important;
-				inset: 0 !important; 
-				background-color: #000;
-				z-index: 100000;
-				display: flex !important;
-				justify-content: center !important;
-				align-items: center !important;
-				opacity: 0;
-				visibility: hidden;
-				transition: opacity 0.8s ease, visibility 0.8s ease;
-			}
-			#screensaver.active {
-				opacity: 1;
-				visibility: visible;
-			}
-			
-			/* Desktop (Landscape) */
-			.flip-clock {
-				display: flex !important;
-				gap: 4vh !important; 
-			}
-			.flip-card {
-				background-color: #1a1a1a;
-				border-radius: 4vh !important;
-				width: 65vh !important; 
-				height: 70vh !important; 
-				display: flex !important;
-				justify-content: center !important;
-				align-items: center !important;
-				position: relative;
-				overflow: hidden;
-				box-shadow: 0 2vh 8vh rgba(0,0,0,0.9);
-			}
-			.flip-card span {
-				font-family: 'Helvetica', Arial, sans-serif;
-				font-size: 60vh !important; 
-				font-weight: 600 !important;
-				color: #d8d8d8; 
-				letter-spacing: -1vh;
-				line-height: 70vh !important; 
+				font-size: 13px;
+				color: #5f6368;
 				user-select: none;
-				text-align: center !important;
-				display: block !important;
-			}
-			.flip-card::after {
-				content: '';
-				position: absolute;
-				top: 50%;
-				left: 0;
-				width: 100%;
-				height: 1.5vh !important; 
-				background-color: #000;
-				transform: translateY(-50%);
-			}
-
-			/* Mobile/Narrow Screen */
-			@media (max-aspect-ratio: 1.4/1) {
-				.flip-clock { gap: 3vw !important; }
-				.flip-card { 
-					width: 45vw !important; 
-					height: 45vw !important; 
-					border-radius: 3vw !important;
-					box-shadow: 0 2vw 6vw rgba(0,0,0,0.9);
-				}
-				.flip-card span { 
-					font-size: 40vw !important; 
-					line-height: 45vw !important; 
-					letter-spacing: -0.5vw; 
-				}
-				.flip-card::after { height: 1.2vw !important; }
-			}
-		</style>
-	</head>
-	<body onload="document.getElementById('searchInput').focus()">
-		
-		<div id="screensaver">
-			<div class="flip-clock">
-				<div class="flip-card">
-					<span id="flip-hours">00</span>
-				</div>
-				<div class="flip-card">
-					<span id="flip-minutes">00</span>
-				</div>
-			</div>
-		</div>
-
-		<header>
-			<a href="https://mail.proton.me/u/0/inbox">Mail</a>
-			<a href="#" id="apps-toggle-link">
-				<img id="products" src="products.png" alt="Apps" width="24" height="24" draggable="false"/>
-			</a>
-			<a href="https://merijnvervoorn.com">
-				<img id="Merijn" class="headerpics" src="https://avatars.githubusercontent.com/u/161606054?v=4" width="32" height="32" alt="Profile" draggable="false"/>
-			</a>
-		</header>
-
-		<div id="apps-menu">
-			<div class="apps-header" style="display: flex; justify-content: space-between; padding: 8px 16px 16px;">
-			</div>
-			<div class="apps-scroll-container">
-				<div class="app-grid">
-					<a href="https://mail.proton.me/u/0/inbox" class="app-item"><i class="fas fa-envelope"></i><span>Proton</span></a>
-					<a href="https://outlook.live.com/calendar/view/month" class="app-item"><i class="fas fa-calendar-alt"></i><span>Calendar</span></a>
-					<a href="https://nas.merijn.cc" class="app-item"><i class="fas fa-server"></i><span>NAS</span></a>
-					<a href="https://verflix.merijn.cc" class="app-item"><i class="fas fa-play-circle"></i><span>Verflix+</span></a>
-					<a href="https://hpanel.hostinger.com/" class="app-item"><i class="fas fa-cloud"></i><span>Hostinger</span></a>
-					<a href="https://cloud.umami.is/analytics/eu/websites" class="app-item"><i class="fas fa-chart-pie"></i><span>Umami</span></a>
-					<a href="https://www.youtube.com/feed/subscriptions" class="app-item"><i class="fab fa-youtube"></i><span>YouTube</span></a>
-					<a href="https://www.netflix.com/browse/my-list" class="app-item"><i class="fas fa-tv"></i><span>Netflix</span></a>
-					<a href="https://github.com/merijnvervoorn" class="app-item"><i class="fab fa-github"></i><span>GitHub</span></a>
-				</div>
-				<hr class="apps-divider">
+				z-index: 10;
 				
-				<div class="app-grid">
-					<a href="https://login.canvas.uva.nl" class="app-item"><i class="fas fa-graduation-cap"></i><span>Canvas</span></a>
-					<a href="https://www.overleaf.com/project" class="app-item"><i class="fas fa-leaf"></i><span>Overleaf</span></a>
-					<a href="https://drive.google.com/drive/u/1/my-drive" class="app-item"><i class="fab fa-google-drive"></i><span>Drive</span></a>
-					<a href="https://www.office.com/apps" class="app-item"><i class="fab fa-microsoft"></i><span>Office</span></a>
-					<a href="https://scholar.google.com/" class="app-item"><i class="fas fa-user-graduate"></i><span>Scholar</span></a>
-				</div>
-				<hr class="apps-divider">
-				
-				<div class="app-grid">
-					<a href="https://justprepare.nl" class="app-item"><i class="fas fa-tasks"></i><span>Prepare</span></a>
-					<a href="https://outlook.office.com/mail/" class="app-item"><i class="fas fa-envelope-open-text"></i><span>Outlook</span></a>
-					<a href="https://flp.sap.uva.nl/fiori?saml2idp=http://login.uva.nl/adfs/services/trust#Shell-home" class="app-item"><i class="fas fa-briefcase"></i><span>Personeel</span></a>
-				</div>
-				<hr class="apps-divider">
-
-				<div class="app-grid">
-					<a href="https://archive.org/" class="app-item"><i class="fas fa-university"></i><span>Archive</span></a>
-					<a href="https://www.goodreads.com/" class="app-item"><i class="fab fa-goodreads"></i><span>Goodreads</span></a>
-					<a href="https://letterboxd.com/" class="app-item"><i class="fas fa-film"></i><span>Letterboxd</span></a>
-				</div>
-			</div>
-		</div>
-
-		<div class="main">
-			<div class="logo-container" style="margin-bottom: 25px !important; padding: 0 !important;">
-				<img src="merijn.png" alt="Merijn." style="margin: 0 !important; width: 270px; height: 108px;" draggable="false"/>
-			</div>
-			
-			<form id="searchForm" name="unduck" role="search" action="https://unduck.link" method="GET" style="width: 100%; max-width: 584px; display: flex; flex-direction: column; align-items: center; margin: 0 !important; padding: 0 !important;">
-				<div class="search-box" id="searchBoxContainer">
-					<svg class="search-icon" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-						<path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
-					</svg>
-					<textarea id="searchInput" name="q" rows="1" autofocus autocomplete="off" spellcheck="false" title="Search"></textarea>
-				</div>
-				
-				<div class="buttons" style="margin-top: 25px !important; padding: 0 !important;">
-					<input type="submit" class="button" name="submit" value="Search">
-					<input type="submit" class="button" name="submit" value="I'm Feeling Purple">
-				</div>
-			</form>
-		</div>
-
-		<footer>
-			<a class="bottomlinks" href="https://www.youtube.com/feed/subscriptions">YouTube</a>
-			<a class="bottomlinks" href="https://github.com/merijnvervoorn">GitHub</a>
-			<a class="bottomlinks" href="https://verflix.merijn.cc">Verflix+</a>
-			<a class="bottomlinks" href="https://nas.merijn.cc">NAS</a>
-		</footer>
-
-		<script>
-		// --- Screensaver Logic ---
-		(function() {
-			let timeout;
-			const screensaver = document.getElementById('screensaver');
-			const hoursEl = document.getElementById('flip-hours');
-			const minutesEl = document.getElementById('flip-minutes');
-
-			function updateTime() {
-				const now = new Date();
-				hoursEl.innerText = String(now.getHours()).padStart(2, '0');
-				minutesEl.innerText = String(now.getMinutes()).padStart(2, '0');
+				/* Ironclad isolation from style.css generic div rules: */
+				padding: 0 !important; 
+				margin: 0 !important;
+				text-align: left !important;
 			}
 
-			function triggerScreensaver() {
-				updateTime(); 
-				screensaver.classList.add('active');
-			}
+            /* Perfect Absolute Centering for Main Content */
+            .main {
+                position: absolute !important;
+                top: 45% !important; 
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 100% !important;
+                height: auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
 
-			function resetTimer() {
-				if (screensaver.classList.contains('active')) {
-					screensaver.classList.remove('active');
-					document.getElementById('searchInput').focus();
-				}
-				clearTimeout(timeout);
-				timeout = setTimeout(triggerScreensaver, 30000); // 120,000 ms = 2 minutes
-			}
+            /* Apps Menu Aesthetic */
+            #apps-menu {
+                display: none;
+                position: absolute !important;
+                top: 56px !important;
+                right: 20px !important;
+                width: 320px;
+                background: #ffffff;
+                border: 1px solid #dadce0;
+                border-radius: 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                padding: 16px 8px !important;
+                z-index: 9999;
+                font-family: Roboto, Arial, sans-serif;
+                will-change: transform, opacity;
+            }
+            #apps-menu.show { display: block; }
+            
+            .apps-scroll-container { max-height: 420px; overflow-y: auto; padding: 0 8px !important; }
+            .apps-scroll-container::-webkit-scrollbar { width: 6px; }
+            .apps-scroll-container::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+            
+            .app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+            
+            #apps-menu .app-item {
+                display: flex !important; flex-direction: column !important; align-items: center !important;
+                padding: 14px 4px !important; border-radius: 8px; text-decoration: none !important;
+                transition: background-color 0.15s ease;
+            }
+            #apps-menu .app-item:hover { background-color: #e8f0fe !important; }
+            #apps-menu .app-item i { font-size: 24px; color: #5f6368; margin-bottom: 8px !important; transition: color 0.15s ease; }
+            #apps-menu .app-item:hover i { color: #1a73e8; }
+            #apps-menu .app-item span { font-size: 13px !important; color: #3c4043 !important; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+            
+            .apps-divider { height: 1px; background-color: #e8eaed; margin: 12px 12px !important; border: none; }
 
-			setInterval(updateTime, 1000);
+            /* --- DYNAMIC SEARCH PILL --- */
+            .search-box {
+                position: relative;
+                width: 100%;
+                display: flex !important;
+                align-items: center !important;
+                border: 1px solid #dfe1e5;
+                border-radius: 24px;
+                padding: 0 14px !important;
+                min-height: 46px;
+                background: transparent !important; 
+                isolation: isolate; 
+                z-index: 1;
+                transition: border-radius 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                            padding 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                            box-shadow 0.2s ease, border-color 0.2s ease;
+            }
 
-			window.onload = resetTimer;
-			document.onmousemove = resetTimer;
-			document.onkeydown = resetTimer;
-			document.onmousedown = resetTimer; 
-			document.ontouchstart = resetTimer;
-			document.onscroll = resetTimer;
-		})();
+            .search-box:hover, .search-box:focus-within {
+                box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+                border-color: rgba(223,225,229,0);
+            }
 
-		// --- Apps Menu Logic ---
-		const appsToggle = document.getElementById('apps-toggle-link');
-		const appsMenu = document.getElementById('apps-menu');
-		appsToggle.addEventListener('click', function(event) {
-			event.preventDefault(); event.stopPropagation();
-			appsMenu.classList.toggle('show');
-		});
-		document.addEventListener('click', function(event) {
-			if (!appsMenu.contains(event.target) && event.target !== appsToggle) {
-				appsMenu.classList.remove('show');
-			}
-		});
+            .search-box::after {
+                content: ""; position: absolute; inset: 0; background: #ffffff; border-radius: inherit; z-index: -1; 
+            }
 
-		// --- Auto-Expand (Ghost) Logic ---
-		const searchInput = document.getElementById('searchInput');
-		const searchContainer = document.getElementById('searchBoxContainer');
-		const expansionThreshold = 30; 
-		
-		const ghost = document.createElement('div');
-		ghost.classList.add('search-ghost');
-		searchContainer.appendChild(ghost);
+            .search-box::before {
+                content: ""; position: absolute; inset: 0; border-radius: inherit;
+                background: linear-gradient(90deg, #4285f4, #db4437, #f4b400, #0f9d58, #4285f4);
+                background-size: 400% 100%; z-index: -2; opacity: 0; pointer-events: none; filter: blur(14px); 
+            }
 
-		function updateGhostWidth() {
-			ghost.style.width = searchInput.clientWidth + 'px';
-		}
-		
-		function checkExpansionState() {
-			ghost.textContent = searchInput.value + '\u200B'; 
-			if (ghost.scrollHeight > expansionThreshold) {
-				searchContainer.classList.add('expanded');
-				searchInput.classList.add('expanded');
-				searchInput.style.height = '160px'; 
-			} else {
-				searchContainer.classList.remove('expanded');
-				searchInput.classList.remove('expanded');
-				searchInput.style.height = '22px';
-			}
-		}
-		
-		updateGhostWidth();
-		searchInput.addEventListener('input', checkExpansionState);
-		window.addEventListener('resize', () => {
-			updateGhostWidth();
-			checkExpansionState();
-		});
+            .search-box.expanded {
+                align-items: flex-start !important;
+                padding-top: 16px !important;
+                padding-bottom: 24px !important; /* Extra room for the counter */
+                border-radius: 16px; 
+                border-color: #dfe1e5; 
+                box-shadow: 0 6px 16px rgba(32,33,36,0.18); 
+            }
 
-		searchInput.addEventListener('keydown', function(e) {
-			if (e.key === 'Enter' && !e.shiftKey) {
-				e.preventDefault(); 
-				document.getElementById('searchForm').dispatchEvent(new Event('submit', { cancelable: true }));
-			}
-		});
+            .search-box.expanded::before { animation: chaseShadow 3s linear, fadeShadowOut 0.5s ease 2s forwards; }
 
-		// --- History Navigation Logic ---
-		const historyKey = 'merijn_cmd_history';
-		let cmdHistory = JSON.parse(localStorage.getItem(historyKey)) || [];
-		let historyIndex = -1;
+            @keyframes chaseShadow { 0% { opacity: 0.6; background-position: 0% 50%; } 100% { opacity: 0.6; background-position: 100% 50%; } }
+            @keyframes fadeShadowOut { from { opacity: 0.6; } to { opacity: 0; } }
 
-		searchInput.addEventListener('keydown', function(e) {
-			if (cmdHistory.length === 0) return;
-			if (e.key === 'ArrowUp') {
-				e.preventDefault();
-				historyIndex = Math.min(historyIndex + 1, cmdHistory.length - 1);
-				this.value = cmdHistory[historyIndex];
-				checkExpansionState();
-			} else if (e.key === 'ArrowDown') {
-				e.preventDefault();
-				historyIndex = Math.max(historyIndex - 1, -1);
-				this.value = historyIndex === -1 ? '' : cmdHistory[historyIndex];
-				checkExpansionState();
-			}
-		});
+            .search-icon { width: 20px; height: 20px; fill: #9aa0a6; margin-right: 10px !important; flex-shrink: 0; transition: margin 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+            .search-box.expanded .search-icon { margin-top: 2px !important; }
 
-		// --- Search Bangs & Submit Logic ---
-		document.getElementById('searchForm').addEventListener('submit', function(event) {
-			var query = searchInput.value.trim();
+            #searchInput {
+                flex-grow: 1; border: none; outline: none; font-size: 16px; background: transparent; resize: none;
+                overflow: hidden; line-height: 22px; height: 22px; padding: 0 !important; margin: 0 !important;
+                font-family: Arial, sans-serif; transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+            #searchInput.expanded { overflow-y: auto; }
+            #searchInput::-webkit-scrollbar { width: 6px; }
+            #searchInput::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
 
-			if (query) {
-				cmdHistory = cmdHistory.filter(cmd => cmd !== query);
-				cmdHistory.unshift(query);
-				if (cmdHistory.length > 50) cmdHistory.pop();
-				localStorage.setItem(historyKey, JSON.stringify(cmdHistory));
-			}
+            .search-ghost {
+                position: absolute; visibility: hidden; pointer-events: none; font-family: Arial, sans-serif;
+                font-size: 16px; line-height: 22px; white-space: pre-wrap; word-wrap: break-word; top: 0; left: 0; z-index: -100;
+            }
 
-			var lQuery = query.toLowerCase();
-			
-			if (lQuery.includes('!gpt') || lQuery.includes('!chat')) {
-				event.preventDefault(); window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(query.replace(/!gpt|!chat/gi, '').trim())}`;
-			} else if (lQuery.includes('!gem')) {
-				event.preventDefault(); window.location.href = `https://gemini.google.com/?q=${encodeURIComponent(query.replace('!gem', '').trim())}`;
-			} else if (lQuery.includes('!gs')) {
-				event.preventDefault(); window.location.href = `https://scholar.google.com/scholar?q=${encodeURIComponent(query.replace('!gs', '').trim())}`;
-			} else if (lQuery.includes('!g')) { 
-				event.preventDefault(); window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query.replace('!g', '').trim())}`;
-			} else if (lQuery.includes('!p')) {
-				event.preventDefault(); window.location.href = `https://www.perplexity.ai/?q=${encodeURIComponent(query.replace('!p', '').trim())}`;
-			} else if (lQuery.includes('!r')) {
-				event.preventDefault(); window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query.replace('!r', '').trim())}+site%3Areddit.com`;
-			} else if (lQuery.includes('!m')) {
-				event.preventDefault(); window.location.href = `https://www.merijn.cc/${encodeURIComponent(query.replace('!m', '').trim())}`;
-			} else if (lQuery === '!barrel') {
-				event.preventDefault();
-				document.body.style.transform = 'rotate(360deg)';
-				document.body.style.transition = 'transform 0.6s ease-in-out';
-				setTimeout(() => { document.body.style.transform = ''; document.body.style.transition = ''; }, 600);
-				searchInput.value = "";
-			} else if (lQuery.includes('!')) {
-				this.action = 'https://unduck.link';
-				this.querySelector('input[type="submit"][value="Search"]').name = '';
-			} else if (lQuery.startsWith('https://') || lQuery.startsWith('http://')) {
-				event.preventDefault(); window.location.href = query.split(' ')[0];
-			} else if (lQuery.includes('.')) {
-				event.preventDefault(); window.location.href = 'https://' + query.split(' ')[0];
-			} else {
-				this.action = 'https://duckduckgo.com/';
-				this.querySelector('input[type="submit"][value="Search"]').name = '';
-			}
-		});
-		</script>
-	</body>
+            /* Live Counter */
+            .counter {
+                position: absolute; bottom: 6px; right: 14px; font-size: 11px; color: #9aa0a6; font-family: Arial, sans-serif;
+                pointer-events: none; opacity: 0; transition: opacity 0.2s ease;
+            }
+            .search-box.expanded .counter { opacity: 1; }
+
+            /* App Launch Popup */
+            #app-popup {
+                display: none; position: absolute; top: calc(100% + 8px); left: 24px; width: 260px;
+                background: #ffffff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: 1px solid #dfe1e5;
+                padding: 8px 0; z-index: 100; max-height: 300px; overflow-y: auto; font-family: Arial, sans-serif;
+            }
+            #app-popup::-webkit-scrollbar { width: 6px; }
+            #app-popup::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+            #app-popup.show { display: block; }
+            
+            .popup-item {
+                display: flex; align-items: center; padding: 10px 16px; cursor: pointer; color: #3c4043; text-decoration: none; font-size: 14px;
+            }
+            .popup-item:hover, .popup-item.selected { background-color: #f1f3f4; }
+            .popup-item i { width: 20px; color: #5f6368; margin-right: 14px; text-align: center; font-size: 16px; }
+
+            /* Footer Styles */
+            footer {
+                position: absolute !important; bottom: 0 !important; left: 0 !important; right: 0 !important;
+                display: flex !important; justify-content: center !important; gap: 30px !important;
+                padding: 20px 0 !important; background: #f3f3f3; border-top: 1px solid #e9e9e9;
+            }
+            footer a { margin: 0 !important; padding: 0 !important; }
+
+            /* --- SCREENSAVER --- */
+            #screensaver {
+                position: fixed !important; inset: 0 !important; background-color: #000; z-index: 100000;
+                display: flex !important; justify-content: center !important; align-items: center !important;
+                opacity: 0; visibility: hidden; transition: opacity 0.8s ease, visibility 0.8s ease;
+            }
+            #screensaver.active { opacity: 1; visibility: visible; }
+            .flip-clock { display: flex !important; gap: 4vh !important; }
+            .flip-card {
+                background-color: #1a1a1a; border-radius: 4vh !important; width: 65vh !important; height: 70vh !important; 
+                display: flex !important; justify-content: center !important; align-items: center !important;
+                position: relative; overflow: hidden; box-shadow: 0 2vh 8vh rgba(0,0,0,0.9);
+            }
+            .flip-card span {
+                font-family: 'Helvetica', Arial, sans-serif; font-size: 60vh !important; font-weight: 600 !important;
+                color: #d8d8d8; letter-spacing: -1vh; line-height: 70vh !important; user-select: none; text-align: center !important; display: block !important;
+            }
+            .flip-card::after {
+                content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1.5vh !important; background-color: #000; transform: translateY(-50%);
+            }
+
+            @media (max-aspect-ratio: 1.4/1) {
+                .flip-clock { gap: 3vw !important; }
+                .flip-card { width: 45vw !important; height: 45vw !important; border-radius: 3vw !important; box-shadow: 0 2vw 6vw rgba(0,0,0,0.9); }
+                .flip-card span { font-size: 40vw !important; line-height: 45vw !important; letter-spacing: -0.5vw; }
+                .flip-card::after { height: 1.2vw !important; }
+            }
+        </style>
+    </head>
+    <body onload="document.getElementById('searchInput').focus()">
+        
+        <div id="greeting"></div>
+
+        <div id="screensaver">
+            <div class="flip-clock">
+                <div class="flip-card"><span id="flip-hours">00</span></div>
+                <div class="flip-card"><span id="flip-minutes">00</span></div>
+            </div>
+        </div>
+
+        <header>
+            <a href="https://mail.proton.me/u/0/inbox">Mail</a>
+            <a href="#" id="apps-toggle-link">
+                <img id="products" src="products.png" alt="Apps" width="24" height="24" draggable="false"/>
+            </a>
+            <a href="https://merijnvervoorn.com">
+                <img id="Merijn" class="headerpics" src="https://avatars.githubusercontent.com/u/161606054?v=4" width="32" height="32" alt="Profile" draggable="false"/>
+            </a>
+        </header>
+
+        <div id="apps-menu">
+            <div class="apps-header" style="display: flex; justify-content: space-between; padding: 8px 16px 16px;"></div>
+            <div class="apps-scroll-container">
+                <div class="app-grid">
+                    <a href="https://mail.proton.me/u/0/inbox" class="app-item"><i class="fas fa-envelope"></i><span>Proton</span></a>
+                    <a href="https://outlook.live.com/calendar/view/month" class="app-item"><i class="fas fa-calendar-alt"></i><span>Calendar</span></a>
+                    <a href="https://nas.merijn.cc" class="app-item"><i class="fas fa-server"></i><span>NAS</span></a>
+                    <a href="https://verflix.merijn.cc" class="app-item"><i class="fas fa-play-circle"></i><span>Verflix+</span></a>
+                    <a href="https://hpanel.hostinger.com/" class="app-item"><i class="fas fa-cloud"></i><span>Hostinger</span></a>
+                    <a href="https://cloud.umami.is/analytics/eu/websites" class="app-item"><i class="fas fa-chart-pie"></i><span>Umami</span></a>
+                    <a href="https://www.youtube.com/feed/subscriptions" class="app-item"><i class="fab fa-youtube"></i><span>YouTube</span></a>
+                    <a href="https://www.netflix.com/browse/my-list" class="app-item"><i class="fas fa-tv"></i><span>Netflix</span></a>
+                    <a href="https://github.com/merijnvervoorn" class="app-item"><i class="fab fa-github"></i><span>GitHub</span></a>
+                </div>
+                <hr class="apps-divider">
+                <div class="app-grid">
+                    <a href="https://login.canvas.uva.nl" class="app-item"><i class="fas fa-graduation-cap"></i><span>Canvas</span></a>
+                    <a href="https://www.overleaf.com/project" class="app-item"><i class="fas fa-leaf"></i><span>Overleaf</span></a>
+                    <a href="https://drive.google.com/drive/u/1/my-drive" class="app-item"><i class="fab fa-google-drive"></i><span>Drive</span></a>
+                    <a href="https://www.office.com/apps" class="app-item"><i class="fab fa-microsoft"></i><span>Office</span></a>
+                    <a href="https://scholar.google.com/" class="app-item"><i class="fas fa-user-graduate"></i><span>Scholar</span></a>
+                </div>
+                <hr class="apps-divider">
+                <div class="app-grid">
+                    <a href="https://justprepare.nl" class="app-item"><i class="fas fa-tasks"></i><span>Prepare</span></a>
+                    <a href="https://outlook.office.com/mail/" class="app-item"><i class="fas fa-envelope-open-text"></i><span>Outlook</span></a>
+                    <a href="https://flp.sap.uva.nl/fiori?saml2idp=http://login.uva.nl/adfs/services/trust#Shell-home" class="app-item"><i class="fas fa-briefcase"></i><span>Personeel</span></a>
+                </div>
+                <hr class="apps-divider">
+                <div class="app-grid">
+                    <a href="https://archive.org/" class="app-item"><i class="fas fa-university"></i><span>Archive</span></a>
+                    <a href="https://www.goodreads.com/" class="app-item"><i class="fab fa-goodreads"></i><span>Goodreads</span></a>
+                    <a href="https://letterboxd.com/" class="app-item"><i class="fas fa-film"></i><span>Letterboxd</span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="logo-container" style="margin-bottom: 25px !important; padding: 0 !important;">
+                <img src="merijn.png" alt="Merijn." style="margin: 0 !important; width: 270px; height: 108px;" draggable="false"/>
+            </div>
+            
+            <form id="searchForm" name="unduck" role="search" action="https://unduck.link" method="GET" style="width: 100%; max-width: 584px; display: flex; flex-direction: column; align-items: center; margin: 0 !important; padding: 0 !important;">
+                <div class="search-box" id="searchBoxContainer">
+                    <svg class="search-icon" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+                    </svg>
+                    <textarea id="searchInput" name="q" rows="1" autofocus autocomplete="off" spellcheck="false" title="Search"></textarea>
+                    
+                    <div id="textCounter" class="counter">0 words • 0 chars</div>
+                    <div id="app-popup"></div>
+                </div>
+                
+                <div class="buttons" style="margin-top: 25px !important; padding: 0 !important;">
+                    <input type="submit" class="button" name="submit" value="Search">
+                    <input type="submit" class="button" name="submit" value="I'm Feeling Purple">
+                </div>
+            </form>
+        </div>
+
+        <footer>
+            <a class="bottomlinks" href="https://www.youtube.com/feed/subscriptions">YouTube</a>
+            <a class="bottomlinks" href="https://github.com/merijnvervoorn">GitHub</a>
+            <a class="bottomlinks" href="https://verflix.merijn.cc">Verflix+</a>
+            <a class="bottomlinks" href="https://nas.merijn.cc">NAS</a>
+        </footer>
+
+        <script>
+        // --- Dynamic Greeting Logic ---
+        (function() {
+            const greetingEl = document.getElementById('greeting');
+            const hour = new Date().getHours();
+            let greetings = [];
+            
+            if (hour >= 5 && hour < 12) {
+                greetings = ["Good morning, Merijn.", "Morning, Merijn.", "Ready for the day, Merijn?"];
+            } else if (hour >= 12 && hour < 18) {
+                greetings = ["Good afternoon, Merijn.", "Afternoon, Merijn.", "Hope you're having a good day."];
+            } else if (hour >= 18 && hour < 23) {
+                greetings = ["Good evening, Merijn.", "Evening, Merijn.", "Winding down, Merijn?"];
+            } else {
+                greetings = ["Late night, Merijn?", "Good night, Merijn.", "Still awake, Merijn?"];
+            }
+            greetingEl.innerText = greetings[Math.floor(Math.random() * greetings.length)];
+        })();
+
+        // --- Global Shortcuts & Focus Logic ---
+        document.addEventListener('keydown', function(e) {
+            // Esc clears the searchbar
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                const input = document.getElementById('searchInput');
+                input.value = '';
+                input.dispatchEvent(new Event('input')); // trigger resize/counters
+                input.focus();
+                return;
+            }
+            
+            // Auto-focus on typing
+            if (document.activeElement !== document.getElementById('searchInput') && 
+                e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                document.getElementById('searchInput').focus();
+            }
+        });
+
+        // --- Screensaver Logic ---
+        (function() {
+            let timeout;
+            const screensaver = document.getElementById('screensaver');
+            const hoursEl = document.getElementById('flip-hours');
+            const minutesEl = document.getElementById('flip-minutes');
+
+            function updateTime() {
+                const now = new Date();
+                hoursEl.innerText = String(now.getHours()).padStart(2, '0');
+                minutesEl.innerText = String(now.getMinutes()).padStart(2, '0');
+            }
+
+            function triggerScreensaver() {
+                updateTime(); 
+                screensaver.classList.add('active');
+            }
+
+            function resetTimer() {
+                if (screensaver.classList.contains('active')) {
+                    screensaver.classList.remove('active');
+                    document.getElementById('searchInput').focus();
+                }
+                clearTimeout(timeout);
+                timeout = setTimeout(triggerScreensaver, 30000); // 120,000 ms = 2 minutes
+            }
+
+            setInterval(updateTime, 1000);
+            window.onload = resetTimer;
+            document.onmousemove = resetTimer;
+            document.onkeydown = resetTimer;
+            document.onmousedown = resetTimer; 
+            document.ontouchstart = resetTimer;
+            document.onscroll = resetTimer;
+        })();
+
+        // --- Apps Menu Logic ---
+        const appsToggle = document.getElementById('apps-toggle-link');
+        const appsMenu = document.getElementById('apps-menu');
+        appsToggle.addEventListener('click', function(event) {
+            event.preventDefault(); event.stopPropagation();
+            appsMenu.classList.toggle('show');
+        });
+        document.addEventListener('click', function(event) {
+            if (!appsMenu.contains(event.target) && event.target !== appsToggle) {
+                appsMenu.classList.remove('show');
+            }
+        });
+
+        // --- Local App Launch & Popup Logic ---
+        const appsData = [
+            { name: 'Proton', url: 'https://mail.proton.me/u/0/inbox', icon: 'fas fa-envelope', aliases: ['mail', 'email', 'protonmail'] },
+            { name: 'Calendar', url: 'https://outlook.live.com/calendar/view/month', icon: 'fas fa-calendar-alt', aliases: ['agenda', 'planning'] },
+            { name: 'NAS', url: 'https://nas.merijn.cc', icon: 'fas fa-server', aliases: ['server', 'storage'] },
+            { name: 'Verflix+', url: 'https://verflix.merijn.cc', icon: 'fas fa-play-circle', aliases: ['movies', 'series', 'plex', 'video'] },
+            { name: 'Hostinger', url: 'https://hpanel.hostinger.com/', icon: 'fas fa-cloud', aliases: ['hosting', 'panel', 'website'] },
+            { name: 'Umami', url: 'https://cloud.umami.is/analytics/eu/websites', icon: 'fas fa-chart-pie', aliases: ['analytics', 'stats'] },
+            { name: 'YouTube', url: 'https://www.youtube.com/feed/subscriptions', icon: 'fab fa-youtube', aliases: ['yt', 'video'] },
+            { name: 'Netflix', url: 'https://www.netflix.com/browse/my-list', icon: 'fas fa-tv', aliases: ['movies', 'series'] },
+            { name: 'GitHub', url: 'https://github.com/merijnvervoorn', icon: 'fab fa-github', aliases: ['git', 'code', 'repo'] },
+            { name: 'Canvas', url: 'https://login.canvas.uva.nl', icon: 'fas fa-graduation-cap', aliases: ['uva', 'school', 'study'] },
+            { name: 'Overleaf', url: 'https://www.overleaf.com/project', icon: 'fas fa-leaf', aliases: ['latex', 'editor', 'paper'] },
+            { name: 'Drive', url: 'https://drive.google.com/drive/u/1/my-drive', icon: 'fab fa-google-drive', aliases: ['google drive', 'cloud', 'files'] },
+            { name: 'Office', url: 'https://www.office.com/apps', icon: 'fab fa-microsoft', aliases: ['word', 'excel', 'microsoft'] },
+            { name: 'Scholar', url: 'https://scholar.google.com/', icon: 'fas fa-user-graduate', aliases: ['papers', 'research', 'google scholar'] },
+            { name: 'Prepare', url: 'https://justprepare.nl', icon: 'fas fa-tasks', aliases: ['tasks', 'todo'] },
+            { name: 'Outlook', url: 'https://outlook.office.com/mail/', icon: 'fas fa-envelope-open-text', aliases: ['mail', 'uva mail', 'work mail'] },
+            { name: 'Personeel', url: 'https://flp.sap.uva.nl/fiori?saml2idp=http://login.uva.nl/adfs/services/trust#Shell-home', icon: 'fas fa-briefcase', aliases: ['uva', 'work', 'sap', 'fiori'] },
+            { name: 'Archive', url: 'https://archive.org/', icon: 'fas fa-university', aliases: ['wayback', 'internet archive'] },
+            { name: 'Goodreads', url: 'https://www.goodreads.com/', icon: 'fab fa-goodreads', aliases: ['books', 'reading'] },
+            { name: 'Letterboxd', url: 'https://letterboxd.com/', icon: 'fas fa-film', aliases: ['movies', 'reviews', 'film'] }
+        ];
+
+        const appPopup = document.getElementById('app-popup');
+        let filteredApps = [];
+        let popupSelectedIndex = 0; // Keeps track of arrow key selection
+
+        function renderAppPopup(query) {
+            appPopup.innerHTML = '';
+            if (!query.startsWith('@')) {
+                appPopup.classList.remove('show');
+                return;
+            }
+            
+            const searchTerm = query.substring(1).toLowerCase();
+            
+            // Filter by name OR aliases
+            filteredApps = appsData.filter(app => {
+                const matchName = app.name.toLowerCase().includes(searchTerm);
+                const matchAlias = app.aliases ? app.aliases.some(alias => alias.toLowerCase().includes(searchTerm)) : false;
+                return matchName || matchAlias;
+            });
+            
+            if (filteredApps.length === 0) {
+                appPopup.classList.remove('show');
+                return;
+            }
+
+            popupSelectedIndex = 0; // Reset to top when typing changes
+
+            filteredApps.forEach((app, index) => {
+                const item = document.createElement('a');
+                item.href = app.url;
+                item.className = 'popup-item' + (index === 0 ? ' selected' : '');
+                item.innerHTML = `<i class="${app.icon}"></i><span>${app.name}</span>`;
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.href = app.url;
+                });
+                appPopup.appendChild(item);
+            });
+            appPopup.classList.add('show');
+        }
+
+        function updatePopupSelection() {
+            const items = appPopup.querySelectorAll('.popup-item');
+            items.forEach((item, index) => {
+                if (index === popupSelectedIndex) {
+                    item.classList.add('selected');
+                    item.scrollIntoView({ block: 'nearest' }); // Scrolls if you arrow down past the visible window
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        // --- Auto-Expand & Word Count Logic ---
+        const searchInput = document.getElementById('searchInput');
+        const searchContainer = document.getElementById('searchBoxContainer');
+        const textCounter = document.getElementById('textCounter');
+        const expansionThreshold = 30; 
+        
+        const ghost = document.createElement('div');
+        ghost.classList.add('search-ghost');
+        searchContainer.appendChild(ghost);
+
+        function updateGhostWidth() {
+            ghost.style.width = searchInput.clientWidth + 'px';
+        }
+        
+        function checkExpansionState() {
+            const val = searchInput.value;
+            ghost.textContent = val + '\u200B'; 
+            
+            if (ghost.scrollHeight > expansionThreshold) {
+                searchContainer.classList.add('expanded');
+                searchInput.classList.add('expanded');
+                searchInput.style.height = '160px'; 
+            } else {
+                searchContainer.classList.remove('expanded');
+                searchInput.classList.remove('expanded');
+                searchInput.style.height = '22px';
+            }
+
+            const chars = val.length;
+            const words = val.trim() === '' ? 0 : val.trim().split(/\s+/).length;
+            textCounter.innerText = `${words} word${words !== 1 ? 's' : ''} • ${chars} char${chars !== 1 ? 's' : ''}`;
+
+            renderAppPopup(val);
+        }
+        
+        updateGhostWidth();
+        searchInput.addEventListener('input', checkExpansionState);
+        window.addEventListener('resize', () => {
+            updateGhostWidth();
+            checkExpansionState();
+        });
+
+        // --- History Navigation, Popup Navigation & Shortcut Logic ---
+        const historyKey = 'merijn_cmd_history';
+        let cmdHistory = JSON.parse(localStorage.getItem(historyKey)) || [];
+        let historyIndex = -1;
+
+        searchInput.addEventListener('keydown', function(e) {
+            const isPopupActive = appPopup.classList.contains('show') && filteredApps.length > 0;
+
+            // 1. Popup Navigation (Intercepts keys if @ menu is open)
+            if (isPopupActive) {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    popupSelectedIndex = Math.min(popupSelectedIndex + 1, filteredApps.length - 1);
+                    updatePopupSelection();
+                    return;
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    popupSelectedIndex = Math.max(popupSelectedIndex - 1, 0);
+                    updatePopupSelection();
+                    return;
+                } else if (e.key === 'Tab') {
+                    e.preventDefault();
+                    this.value = '@' + filteredApps[popupSelectedIndex].name + ' ';
+                    checkExpansionState();
+                    return;
+                } else if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    window.location.href = filteredApps[popupSelectedIndex].url;
+                    return;
+                }
+            }
+
+            // 2. Standard Search Enter Submit
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); 
+                document.getElementById('searchForm').dispatchEvent(new Event('submit', { cancelable: true }));
+                return;
+            }
+
+            // 3. Command History (Only runs if popup is NOT active)
+            if (cmdHistory.length === 0) return;
+            if (!isPopupActive) {
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    historyIndex = Math.min(historyIndex + 1, cmdHistory.length - 1);
+                    this.value = cmdHistory[historyIndex];
+                    checkExpansionState();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    historyIndex = Math.max(historyIndex - 1, -1);
+                    this.value = historyIndex === -1 ? '' : cmdHistory[historyIndex];
+                    checkExpansionState();
+                }
+            }
+        });
+
+        // --- Search Bangs & Submit Logic ---
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            var query = searchInput.value.trim();
+            var lQuery = query.toLowerCase();
+
+            // Local App Launch Check
+            if (lQuery.startsWith('@')) {
+                event.preventDefault();
+                const appName = lQuery.substring(1).trim();
+                const selectedApp = appsData.find(app => app.name.toLowerCase().includes(appName));
+                if (selectedApp) {
+                    window.location.href = selectedApp.url;
+                }
+                return; // Prevent normal search
+            }
+
+            if (query) {
+                cmdHistory = cmdHistory.filter(cmd => cmd !== query);
+                cmdHistory.unshift(query);
+                if (cmdHistory.length > 50) cmdHistory.pop();
+                localStorage.setItem(historyKey, JSON.stringify(cmdHistory));
+            }
+            
+            if (lQuery.includes('!gpt') || lQuery.includes('!chat')) {
+                event.preventDefault(); window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(query.replace(/!gpt|!chat/gi, '').trim())}`;
+            } else if (lQuery.includes('!gem')) {
+                event.preventDefault(); window.location.href = `https://gemini.google.com/?q=${encodeURIComponent(query.replace('!gem', '').trim())}`;
+            } else if (lQuery.includes('!gs')) {
+                event.preventDefault(); window.location.href = `https://scholar.google.com/scholar?q=${encodeURIComponent(query.replace('!gs', '').trim())}`;
+            } else if (lQuery.includes('!g')) { 
+                event.preventDefault(); window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query.replace('!g', '').trim())}`;
+            } else if (lQuery.includes('!p')) {
+                event.preventDefault(); window.location.href = `https://www.perplexity.ai/?q=${encodeURIComponent(query.replace('!p', '').trim())}`;
+            } else if (lQuery.includes('!r')) {
+                event.preventDefault(); window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query.replace('!r', '').trim())}+site%3Areddit.com`;
+            } else if (lQuery.includes('!m')) {
+                event.preventDefault(); window.location.href = `https://www.merijn.cc/${encodeURIComponent(query.replace('!m', '').trim())}`;
+            } else if (lQuery === '!barrel') {
+                event.preventDefault();
+                document.body.style.transform = 'rotate(360deg)';
+                document.body.style.transition = 'transform 0.6s ease-in-out';
+                setTimeout(() => { document.body.style.transform = ''; document.body.style.transition = ''; }, 600);
+                searchInput.value = "";
+            } else if (lQuery.includes('!')) {
+                this.action = 'https://unduck.link';
+                this.querySelector('input[type="submit"][value="Search"]').name = '';
+            } else if (lQuery.startsWith('https://') || lQuery.startsWith('http://')) {
+                event.preventDefault(); window.location.href = query.split(' ')[0];
+            } else if (lQuery.includes('.')) {
+                event.preventDefault(); window.location.href = 'https://' + query.split(' ')[0];
+            } else {
+                this.action = 'https://duckduckgo.com/';
+                this.querySelector('input[type="submit"][value="Search"]').name = '';
+            }
+        });
+        </script>
+    </body>
 </html>

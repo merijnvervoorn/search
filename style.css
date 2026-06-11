@@ -82,24 +82,28 @@ div img {
 }
 
 .button {
-	border: 1px solid #ffffff;
-	background: #f3f3f3;
-	color:#7e7e7e;
-	margin-left:4px;
-	margin-right:4px;
-	margin-top: 15px;
-	font-family: arial, sans-serif;
-	font-size: 12px;
-	font-weight: bold;
-	padding: 7px;
-	border-radius:2px;
+    background-color: #f8f9fa;
+    border: 1px solid #f8f9fa;
+    border-radius: 4px;
+    color: #3c4043;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    margin: 11px 4px;
+    padding: 0 16px;
+    line-height: 27px;
+    height: 36px;
+    min-width: 54px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .button:hover {
-	color: #454545;
-	border: 1px solid #bdbdbd;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    background-color: #f8f9fa;
+    border: 1px solid #dadce0;
+    color: #202124;
 }
-
 .search:hover {
 	border:1px solid #aaaaaa;
 }

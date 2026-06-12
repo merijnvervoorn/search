@@ -411,7 +411,7 @@
             { name: 'Calendar', url: 'https://outlook.live.com/calendar/view/month', icon: 'fas fa-calendar-alt', aliases: ['agenda', 'planning'] },
             { name: 'Canva', url: 'https://www.canva.com/', icon: 'fas fa-paint-brush', aliases: ['design'] },
             { name: 'Canvas', url: 'https://login.canvas.uva.nl', icon: 'fas fa-graduation-cap', aliases: ['uva', 'school', 'study'] },
-            {name: 'DeepL', url: 'https://www.deepl.com/translator', icon: 'fas fa-language', aliases: ['translation', 'translator'] },
+            { name: 'DeepL', url: 'https://www.deepl.com/translator', icon: 'fas fa-language', aliases: ['translation', 'translator'] },
             { name: 'Drive', url: 'https://drive.google.com/drive/u/1/my-drive', icon: 'fab fa-google-drive', aliases: ['google drive', 'cloud', 'files'] },
             { name: 'GitHub', url: 'https://github.com/merijnvervoorn', icon: 'fab fa-github', aliases: ['git', 'code', 'repo'] },
             { name: 'Goodreads', url: 'https://www.goodreads.com/', icon: 'fab fa-goodreads', aliases: ['books', 'reading'] },
@@ -426,7 +426,9 @@
             { name: 'Prepare', url: 'https://justprepare.nl', icon: 'fas fa-tasks', aliases: ['justprepare'] },
             { name: 'Proton', url: 'https://mail.proton.me/u/0/inbox', icon: 'fas fa-envelope', aliases: ['mail', 'email', 'protonmail'] },
             { name: 'Scholar', url: 'https://scholar.google.com/', icon: 'fas fa-user-graduate', aliases: ['papers', 'research', 'google scholar'] },
+            { name: 'Thesaurus', url: 'https://www.thesaurus.com/', icon: 'fas fa-book', aliases: ['synonyms', 'antonyms'] },
             { name: 'Umami', url: 'https://cloud.umami.is/analytics/eu/websites', icon: 'fas fa-chart-pie', aliases: ['analytics', 'stats'] },
+            { name: 'Vandale', url: 'https://zoeken.vandale.nl/', icon: 'fas fa-search', aliases: ['search', 'vandale', 'woordenboek'] },
             { name: 'Verflix+', url: 'https://verflix.merijn.cc', icon: 'fas fa-play-circle', aliases: ['movies', 'series', 'plex', 'video'] },
             { name: 'YouTube', url: 'https://www.youtube.com/feed/subscriptions', icon: 'fab fa-youtube', aliases: ['yt', 'video'] }
         ];
@@ -667,8 +669,8 @@
                 event.preventDefault(); window.location.href = `https://scholar.google.com/scholar?q=${encodeURIComponent(query.replace('!gs', '').trim())}`;
             } else if (lQuery.includes('!g')) { 
                 event.preventDefault(); window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query.replace('!g', '').trim())}`;
-            } else if (lQuery.includes('!p')) {
-                event.preventDefault(); window.location.href = `https://www.perplexity.ai/?q=${encodeURIComponent(query.replace('!p', '').trim())}`;
+            } else if (lQuery.includes('!b')) {
+                event.preventDefault(); window.location.href = `https://zoeken.vandale.nl/?query=${encodeURIComponent(query.replace('!b', '').trim())}`;
             } else if (lQuery.includes('!r')) {
                 event.preventDefault(); window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query.replace('!r', '').trim())}+site%3Areddit.com`;
             } else if (lQuery.startsWith('!m ')) { 

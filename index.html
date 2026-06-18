@@ -25,11 +25,11 @@
                 overflow: hidden; 
             }
 
-			/* --- HEADER ALIGNMENT FIX --- */
-			header {
-				display: flex !important;
-				align-items: center !important;
-			}
+            /* --- HEADER ALIGNMENT FIX --- */
+            header {
+                display: flex !important;
+                align-items: center !important;
+            }
 
             /* IRONCLAD ISOLATION: Forces style.css to ignore our new layout */
             div.main, div.logo-container, div.search-box, div.buttons, div.search-ghost,
@@ -40,21 +40,21 @@
             }
 
             /* Dynamic Greeting */
-			#greeting {
-				position: absolute;
-				top: 20px;
-				left: 30px;
-				font-family: Arial, sans-serif;
-				font-size: 13px;
-				color: #5f6368;
-				user-select: none;
-				z-index: 10;
-				
-				/* Ironclad isolation from style.css generic div rules: */
-				padding: 0 !important; 
-				margin: 0 !important;
-				text-align: left !important;
-			}
+            #greeting {
+                position: absolute;
+                top: 20px;
+                left: 30px;
+                font-family: Arial, sans-serif;
+                font-size: 13px;
+                color: #5f6368;
+                user-select: none;
+                z-index: 10;
+                
+                /* Ironclad isolation from style.css generic div rules: */
+                padding: 0 !important; 
+                margin: 0 !important;
+                text-align: left !important;
+            }
 
             /* Perfect Absolute Centering for Main Content */
             .main {
@@ -172,10 +172,125 @@
 
             /* Live Counter */
             .counter {
-                position: absolute; bottom: 6px; right: 14px; font-size: 11px; color: #9aa0a6; font-family: Arial, sans-serif;
-                pointer-events: none; opacity: 0; transition: opacity 0.2s ease;
+                position: absolute; 
+                bottom: 6px; 
+                right: 14px; 
+                font-size: 11px; 
+                color: #9aa0a6; 
+                font-family: Arial, sans-serif;
+                pointer-events: none; 
+                opacity: 0; 
+                transition: opacity 0.2s ease;
+
+                /* Forces the hit area to perfectly hug the text */
+                line-height: 1;
+                width: max-content;
+                height: max-content;
+                margin: 0;
+                padding: 0;
             }
-            .search-box.expanded .counter { opacity: 1; }
+            .search-box.expanded .counter { 
+                opacity: 1; 
+                pointer-events: auto; /* Makes the link clickable only when visible */
+            }
+            .counter:hover {
+                text-decoration: underline !important; color: #3c4043; 
+            }
+
+            /* --- Text Stats Dropdown (True Material Design 3) --- */
+            .stats-dropdown {
+                display: none; 
+                position: absolute !important; 
+                top: 0 !important; 
+                left: calc(100% + 20px) !important; 
+                width: 280px !important; 
+                background: #ffffff; 
+                border: 1px solid #dadce0; 
+                border-radius: 24px; 
+                box-shadow: 0 8px 24px rgba(0,0,0,0.12); 
+                padding: 16px 24px 24px 24px !important; /* Tighter top padding */
+                z-index: 100;
+                font-family: 'Google Sans', Roboto, Arial, sans-serif; 
+                cursor: default;
+                box-sizing: border-box !important;
+            }
+            .stats-dropdown.show { display: block !important; }
+
+            /* Forcefully hide the header, lists, and paragraphs */
+            .stats-header, .stats-lists, .stat-box:nth-child(5) { 
+                display: none !important; 
+            }
+
+            /* Uniform 2-Column Grid */
+            .stats-grid { 
+                display: grid !important; 
+                grid-template-columns: repeat(2, 1fr) !important; 
+                gap: 12px !important; 
+                margin-top: 0 !important; /* Kills any hidden top margins */
+                margin-bottom: 24px !important; 
+            }
+
+            /* Identical MD3 Surface Cards */
+            .stat-box, .stat-span-2 { 
+                background: #f1f3f4 !important; /* MD3 Surface Container */
+                border: none !important; /* Remove outlines for a cleaner look */
+                border-radius: 12px !important; 
+                padding: 0 8px !important; 
+                display: flex !important; 
+                flex-direction: column !important; 
+                align-items: center !important; 
+                justify-content: center !important;
+                grid-column: span 1 !important; 
+                height: 72px !important; /* FORCES uniform height */
+                width: 100% !important; /* FORCES uniform width */
+                box-sizing: border-box !important;
+            }
+
+            .stat-box span, .stat-span-2 span { 
+                color: #5f6368 !important; /* MD3 On-Surface Variant */
+                font-size: 10px !important; 
+                margin-bottom: 6px !important; 
+                text-transform: uppercase !important; 
+                letter-spacing: 0.5px !important; 
+                font-weight: 600 !important;
+                line-height: 1 !important;
+            }
+
+            /* Deep Google Blue for the numbers */
+            .stat-box strong, .stat-span-2 strong { 
+                color: #0b57d0 !important; /* MD3 Primary color */
+                font-size: 22px !important; 
+                font-weight: 500 !important; 
+                line-height: 1.2 !important; 
+            }
+
+            /* MD3 Tonal Button */
+            .stats-footer { 
+                border-top: none !important; /* MD3 uses spacing, not divider lines here */
+                padding-top: 0 !important;
+            }
+
+            .stats-action-btn { 
+                background: #d3e3fd !important; /* MD3 Secondary Container */
+                border: none !important; 
+                color: #041e49 !important; /* MD3 On-Secondary Container */
+                padding: 12px 24px !important; 
+                border-radius: 100px !important; /* Fully rounded pill */
+                font-size: 14px !important; 
+                font-weight: 500 !important; 
+                cursor: pointer !important; 
+                width: 100% !important; 
+                display: flex !important; 
+                justify-content: center !important; 
+                align-items: center !important; 
+                gap: 8px !important;
+                transition: background 0.2s ease, box-shadow 0.2s ease !important;
+            }
+
+            .stats-action-btn:hover { 
+                background: #c2d7fa !important; 
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            }
 
             /* App Launch Popup */
             #app-popup {
@@ -300,8 +415,34 @@
                     </svg>
                     <textarea id="searchInput" name="q" rows="1" autofocus autocomplete="off" spellcheck="false" title="Search"></textarea>
                     
-                    <div id="textCounter" class="counter">0 words • 0 chars</div>
+                    <div id="textCounter" class="counter" style="cursor: pointer;">0 words • 0 chars</div>
                     <div id="app-popup"></div>
+                    <div id="stats-dropdown" class="stats-dropdown">
+                        <div class="stats-grid">
+                            <div class="stat-box"><span>Words</span><strong id="stat-words">0</strong></div>
+                            <div class="stat-box"><span>Characters</span><strong id="stat-chars">0</strong></div>
+                            <div class="stat-box"><span>Chars No Spaces</span><strong id="stat-chars-no-spaces">0</strong></div>
+                            <div class="stat-box"><span>Sentences</span><strong id="stat-sentences">0</strong></div>
+                            <div class="stat-box"><span>Paragraphs</span><strong id="stat-paragraphs">0</strong></div>
+                            <div class="stat-box"><span>Read Time</span><strong id="stat-read">0m 0s</strong></div>
+                            <div class="stat-box stat-span-2"><span>Speak Time</span><strong id="stat-speak">0m 0s</strong></div>
+                        </div>
+                        <div class="stats-lists">
+                            <div class="list-section">
+                                <h4>Top Words</h4>
+                                <ul id="stat-top-words"></ul>
+                            </div>
+                            <div class="list-section">
+                                <h4>Top Combos</h4>
+                                <ul id="stat-top-bigrams"></ul>
+                            </div>
+                        </div>
+                        <div class="stats-footer">
+                            <button id="btn-alphabetize" class="stats-action-btn">
+                                <i class="fas fa-sort-alpha-down"></i> Alphabetize Lines
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="buttons" style="margin-top: 25px !important; padding: 0 !important;">
@@ -406,12 +547,12 @@
         });
 
         // --- Local App Launch & Popup Logic ---
-		const appsData = [
+        const appsData = [
             { name: 'Archive', url: 'https://archive.org/', icon: 'fas fa-university', aliases: ['wayback', 'internet archive'] },
             { name: 'Calendar', url: 'https://outlook.live.com/calendar/view/month', icon: 'fas fa-calendar-alt', aliases: ['agenda', 'planning'] },
             { name: 'Canva', url: 'https://www.canva.com/', icon: 'fas fa-paint-brush', aliases: ['design'] },
             { name: 'Canvas', url: 'https://login.canvas.uva.nl', icon: 'fas fa-graduation-cap', aliases: ['uva', 'school', 'study'] },
-            {name: 'DeepL', url: 'https://www.deepl.com/translator', icon: 'fas fa-language', aliases: ['translation', 'translator'] },
+            { name: 'DeepL', url: 'https://www.deepl.com/translator', icon: 'fas fa-language', aliases: ['translation', 'translator'] },
             { name: 'Drive', url: 'https://drive.google.com/drive/u/1/my-drive', icon: 'fab fa-google-drive', aliases: ['google drive', 'cloud', 'files'] },
             { name: 'GitHub', url: 'https://github.com/merijnvervoorn', icon: 'fab fa-github', aliases: ['git', 'code', 'repo'] },
             { name: 'Goodreads', url: 'https://www.goodreads.com/', icon: 'fab fa-goodreads', aliases: ['books', 'reading'] },
@@ -426,12 +567,14 @@
             { name: 'Prepare', url: 'https://justprepare.nl', icon: 'fas fa-tasks', aliases: ['justprepare'] },
             { name: 'Proton', url: 'https://mail.proton.me/u/0/inbox', icon: 'fas fa-envelope', aliases: ['mail', 'email', 'protonmail'] },
             { name: 'Scholar', url: 'https://scholar.google.com/', icon: 'fas fa-user-graduate', aliases: ['papers', 'research', 'google scholar'] },
+            { name: 'Thesaurus', url: 'https://www.thesaurus.com/', icon: 'fas fa-book', aliases: ['synonyms', 'antonyms'] },
             { name: 'Umami', url: 'https://cloud.umami.is/analytics/eu/websites', icon: 'fas fa-chart-pie', aliases: ['analytics', 'stats'] },
+            { name: 'Vandale', url: 'https://zoeken.vandale.nl/', icon: 'fas fa-search', aliases: ['search', 'vandale', 'woordenboek'] },
             { name: 'Verflix+', url: 'https://verflix.merijn.cc', icon: 'fas fa-play-circle', aliases: ['movies', 'series', 'plex', 'video'] },
             { name: 'YouTube', url: 'https://www.youtube.com/feed/subscriptions', icon: 'fab fa-youtube', aliases: ['yt', 'video'] }
         ];
 
-		// --- Fetch merijn.cc Links ---
+        // --- Fetch merijn.cc Links ---
         let merijnLinks = {};
         let linksKeys = [];
 
@@ -659,16 +802,16 @@
                 localStorage.setItem(historyKey, JSON.stringify(cmdHistory));
             }
             
-            if (lQuery.includes('!gpt') || lQuery.includes('!chat')) {
-                event.preventDefault(); window.location.href = `https://chat.openai.com/?q=${encodeURIComponent(query.replace(/!gpt|!chat/gi, '').trim())}`;
+            if (lQuery.includes('!v')) {
+                event.preventDefault(); window.location.href = `https://chat.mistral.ai/chat?q=${encodeURIComponent(query.replace('!v', '').trim())}`;
             } else if (lQuery.includes('!gem')) {
                 event.preventDefault(); window.location.href = `https://gemini.google.com/?q=${encodeURIComponent(query.replace('!gem', '').trim())}`;
             } else if (lQuery.includes('!gs')) {
                 event.preventDefault(); window.location.href = `https://scholar.google.com/scholar?q=${encodeURIComponent(query.replace('!gs', '').trim())}`;
             } else if (lQuery.includes('!g')) { 
                 event.preventDefault(); window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query.replace('!g', '').trim())}`;
-            } else if (lQuery.includes('!p')) {
-                event.preventDefault(); window.location.href = `https://www.perplexity.ai/?q=${encodeURIComponent(query.replace('!p', '').trim())}`;
+            } else if (lQuery.includes('!b')) {
+                event.preventDefault(); window.location.href = `https://zoeken.vandale.nl/?query=${encodeURIComponent(query.replace('!b', '').trim())}`;
             } else if (lQuery.includes('!r')) {
                 event.preventDefault(); window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(query.replace('!r', '').trim())}+site%3Areddit.com`;
             } else if (lQuery.startsWith('!m ')) { 
@@ -701,6 +844,116 @@
                 this.querySelector('input[type="submit"][value="Search"]').name = '';
             }
         });
+
+        // --- Internal Word Count Tool ---
+        (function() {
+            const textCounterBtn = document.getElementById('textCounter');
+            const statsDropdown = document.getElementById('stats-dropdown');
+            const btnAlphabetize = document.getElementById('btn-alphabetize');
+            const inputArea = document.getElementById('searchInput');
+
+            const stopWords = new Set(["a", "an", "and", "are", "as", "at", "be", "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", "to", "was", "will", "with", "i", "you", "he", "she", "we", "my", "your", "his", "her", "our", "do", "can", "so", "from", "about", "which", "when", "what", "where", "how", "all"]);
+
+            function formatTime(words, wpm) {
+                const minutes = Math.floor(words / wpm);
+                const seconds = Math.round((words % wpm) / (wpm / 60));
+                return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+            }
+
+            function calculateStats() {
+                const text = inputArea.value;
+                const trimmedText = text.trim();
+                
+                const chars = text.length;
+                const charsNoSpaces = text.replace(/\s/g, '').length;
+                const words = trimmedText === '' ? 0 : trimmedText.split(/\s+/).length;
+                const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+                const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 0).length;
+
+                document.getElementById('stat-words').innerText = words;
+                document.getElementById('stat-chars').innerText = chars;
+                document.getElementById('stat-chars-no-spaces').innerText = charsNoSpaces;
+                document.getElementById('stat-sentences').innerText = sentences;
+                document.getElementById('stat-paragraphs').innerText = paragraphs;
+                document.getElementById('stat-read').innerText = formatTime(words, 238);
+                document.getElementById('stat-speak').innerText = formatTime(words, 150);
+
+                const rawWords = text.toLowerCase().match(/\b[\w']+\b/g) || [];
+                const wordFreq = {};
+                const bigramFreq = {};
+
+                rawWords.forEach(w => {
+                    if (!stopWords.has(w) && w.length > 1) wordFreq[w] = (wordFreq[w] || 0) + 1;
+                });
+
+                for (let i = 0; i < rawWords.length - 1; i++) {
+                    const w1 = rawWords[i];
+                    const w2 = rawWords[i+1];
+                    if (!stopWords.has(w1) && !stopWords.has(w2) && w1.length > 1 && w2.length > 1) {
+                        const bigram = `${w1} ${w2}`;
+                        bigramFreq[bigram] = (bigramFreq[bigram] || 0) + 1;
+                    }
+                }
+
+                const topWords = Object.entries(wordFreq).sort((a, b) => b[1] - a[1]).slice(0, 5);
+                const topBigrams = Object.entries(bigramFreq).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+                const renderList = (items, elementId) => {
+                    const el = document.getElementById(elementId);
+                    el.innerHTML = items.length === 0 
+                        ? '<li>No data</li>' 
+                        : items.map(item => `<li>${item[0]} <span>${item[1]}x</span></li>`).join('');
+                };
+
+                renderList(topWords, 'stat-top-words');
+                renderList(topBigrams, 'stat-top-bigrams');
+            }
+
+            // Live update while typing
+            inputArea.addEventListener('input', () => {
+                if (statsDropdown.classList.contains('show')) {
+                    calculateStats();
+                }
+            });
+
+            // Toggle Menu
+            textCounterBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                // This makes it a strict on/off toggle
+                const isShowing = statsDropdown.classList.toggle('show');
+                if (isShowing) {
+                    calculateStats();
+                }
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (event) => {
+                // Notice we added 'inputArea' below so clicking the search box keeps the menu alive
+                if (!statsDropdown.contains(event.target) && 
+                    event.target !== textCounterBtn && 
+                    event.target !== inputArea) {
+                    statsDropdown.classList.remove('show');
+                }
+            });
+
+            // Prevent closing when clicking inside the dropdown
+            statsDropdown.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+
+            btnAlphabetize.addEventListener('click', (e) => {
+                e.preventDefault(); // <-- THIS STOPS IT FROM SEARCHING!
+                const text = inputArea.value;
+                if (!text.trim()) return;
+                const lines = text.split('\n');
+                const sortedLines = lines.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+                inputArea.value = sortedLines.join('\n');
+                inputArea.dispatchEvent(new Event('input')); 
+                calculateStats(); 
+            });
+        })();
         </script>
     </body>
 </html>

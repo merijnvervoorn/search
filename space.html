@@ -995,7 +995,7 @@ setInterval(initMiniPill, 900000);
             } else if (originalQuery.includes('https://') || originalQuery.includes('http://')) {
                 event.preventDefault();
                 navigate(originalQuery.split(' ')[0]);
-            } else if (originalQuery.includes('.') && !originalQuery.includes(' ')) {
+            } else if (!originalQuery.includes(' ') && (/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/.test(originalQuery) || /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}(\/.*)?$/.test(originalQuery))) {
                 event.preventDefault();
                 navigate('https://' + originalQuery);
             } else {

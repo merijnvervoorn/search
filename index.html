@@ -34,6 +34,9 @@
             /* IRONCLAD ISOLATION: Forces style.css to ignore our new layout */
             div.main, div.logo-container, div.search-box, div.buttons, div.search-ghost,
             div#screensaver, div.flip-clock, div.flip-card,
+            div#links-hub, div.hub-dialog, div.hub-header, div.hub-heading,
+            div.hub-content, div.hub-results, div.hub-section,
+            div.hub-section-header, div.hub-grid,
             div#apps-menu, div.apps-scroll-container, div.app-grid, div.app-item {
                 padding-top: 0 !important;
                 margin: 0 !important;
@@ -49,6 +52,7 @@
                 color: #5f6368;
                 user-select: none;
                 z-index: 10;
+                cursor: pointer;
                 
                 /* Ironclad isolation from style.css generic div rules: */
                 padding: 0 !important; 
@@ -316,31 +320,223 @@
             }
             footer a { margin: 0 !important; padding: 0 !important; }
 
+            /* --- FULL-PAGE LINKS HUB --- */
+            body.hub-open .main,
+            body.hub-open footer { display: none !important; }
+            #links-hub {
+                display: none;
+                position: fixed !important;
+                inset: 58px 0 0 !important;
+                z-index: 9000;
+                overflow-y: auto;
+                padding: 0 6vw 56px !important;
+                background:
+                    radial-gradient(ellipse at 12% 0%, rgba(216, 229, 248, 0.55), transparent 38%),
+                    #f7f8fa;
+                font-family: Arial, sans-serif;
+            }
+            #links-hub.active { display: block; }
+            .hub-page { width: min(1180px, 100%); margin: 0 auto !important; padding-top: 56px !important; }
+            .hub-header {
+                display: block;
+                margin: 0 0 28px !important;
+                text-align: left;
+            }
+            .hub-heading { padding: 0 !important; margin: 0 !important; text-align: left !important; }
+            .hub-kicker {
+                margin: 0 0 12px !important;
+                color: #697386 !important;
+                font-size: 12px !important;
+                font-weight: 700;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+            }
+            .hub-title {
+                margin: 0 !important;
+                color: #202633 !important;
+                font-size: clamp(38px, 6vw, 64px) !important;
+                font-weight: 500 !important;
+                letter-spacing: -0.055em;
+                line-height: 1 !important;
+            }
+            .hub-intro {
+                max-width: 560px;
+                margin: 17px 0 0 !important;
+                color: #737d8c !important;
+                font-size: 15px !important;
+                line-height: 1.65 !important;
+            }
+            .hub-search {
+                box-sizing: border-box;
+                width: min(560px, 100%);
+                margin: 0 0 16px !important;
+                padding: 15px 18px !important;
+                border: 1px solid #e0e4eb;
+                border-radius: 10px;
+                outline: none;
+                background: #fff;
+                color: #202633;
+                box-shadow: 0 4px 18px rgba(29, 42, 64, 0.035);
+                font: 15px Arial, sans-serif !important;
+            }
+            .hub-search:focus {
+                border-color: #a7b8d5;
+                box-shadow: 0 0 0 3px rgba(85,125,205,0.1);
+            }
+            .hub-status {
+                min-height: 16px;
+                margin: 0 0 34px !important;
+                color: #8a929f !important;
+                font-size: 11px !important;
+            }
+            .hub-results {
+                padding-bottom: 20px !important;
+            }
+            .hub-section { margin: 0 0 42px !important; }
+            .hub-section[data-section="projects"] .hub-card {
+                min-height: 156px;
+                border-color: #e0e4ee;
+                background: linear-gradient(145deg, #fff 20%, #f8f8fd 100%);
+            }
+            .hub-section[data-section="portfolio"] .hub-card { min-height: 112px; }
+            .hub-section-header {
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 15px !important;
+                text-align: left;
+            }
+            .hub-section-title {
+                margin: 0 !important;
+                color: #343d4c !important;
+                font-size: 18px !important;
+                font-weight: 600 !important;
+                letter-spacing: -0.02em;
+            }
+            .hub-section-description { margin: 0 !important; color: #9098a5 !important; font-size: 12px !important; }
+            .hub-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+            .hub-card {
+                display: flex !important;
+                position: relative;
+                flex-direction: column !important;
+                justify-content: space-between;
+                min-height: 142px;
+                padding: 18px !important;
+                border: 1px solid #e6e8ed;
+                border-radius: 8px;
+                background: rgba(255,255,255,0.85);
+                color: #202633;
+                text-align: left !important;
+                text-decoration: none !important;
+                transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+            }
+            .hub-card:hover {
+                transform: translateY(-3px);
+                border-color: #ccd5e2;
+                box-shadow: 0 12px 28px rgba(40,55,85,0.08);
+            }
+            .hub-card-mark {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 34px;
+                height: 34px;
+                border-radius: 8px;
+                background: var(--hub-accent, #e9edf4);
+                color: var(--hub-ink, #48566d);
+                font-size: 15px;
+            }
+            .hub-card-title {
+                display: block;
+                overflow: hidden;
+                margin-top: 18px !important;
+                color: #273244 !important;
+                font-size: 15px !important;
+                font-weight: 600 !important;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .hub-card-description {
+                overflow: hidden;
+                margin-top: 5px !important;
+                color: #838c99 !important;
+                font-size: 11px !important;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .hub-card-arrow { position: absolute; top: 17px; right: 17px; color: #9ba3ae; font-size: 14px; }
             /* --- SCREENSAVER --- */
             #screensaver {
-                position: fixed !important; inset: 0 !important; background-color: #000; z-index: 100000;
-                display: flex !important; justify-content: center !important; align-items: center !important;
-                opacity: 0; visibility: hidden; transition: opacity 0.8s ease, visibility 0.8s ease;
+                position: fixed !important;
+                inset: 0 !important;
+                z-index: 100001;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background: #000;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.8s ease, visibility 0.8s ease;
             }
             #screensaver.active { opacity: 1; visibility: visible; }
             .flip-clock { display: flex !important; gap: 4vh !important; }
             .flip-card {
-                background-color: #1a1a1a; border-radius: 4vh !important; width: 65vh !important; height: 70vh !important; 
-                display: flex !important; justify-content: center !important; align-items: center !important;
-                position: relative; overflow: hidden; box-shadow: 0 2vh 8vh rgba(0,0,0,0.9);
+                position: relative;
+                display: flex !important;
+                overflow: hidden;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 65vh !important;
+                height: 70vh !important;
+                border-radius: 4vh !important;
+                background: #1a1a1a;
+                box-shadow: 0 2vh 8vh rgba(0,0,0,0.9);
             }
             .flip-card span {
-                font-family: 'Helvetica', Arial, sans-serif; font-size: 60vh !important; font-weight: 600 !important;
-                color: #d8d8d8; letter-spacing: -1vh; line-height: 70vh !important; user-select: none; text-align: center !important; display: block !important;
+                display: block !important;
+                color: #d8d8d8;
+                font-family: Helvetica, Arial, sans-serif;
+                font-size: 60vh !important;
+                font-weight: 600 !important;
+                letter-spacing: -1vh;
+                line-height: 70vh !important;
+                text-align: center !important;
+                user-select: none;
             }
             .flip-card::after {
-                content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1.5vh !important; background-color: #000; transform: translateY(-50%);
+                position: absolute;
+                top: 50%;
+                left: 0;
+                width: 100%;
+                height: 1.5vh !important;
+                background: #000;
+                content: '';
+                transform: translateY(-50%);
             }
-
+            @media (max-width: 600px) {
+                #links-hub { inset: 54px 0 0 !important; padding: 0 20px 36px !important; }
+                .hub-page { padding-top: 38px !important; }
+                .hub-header { margin-bottom: 22px !important; }
+                .hub-intro { margin-top: 12px !important; font-size: 14px !important; }
+                .hub-status { margin-bottom: 26px !important; }
+                .hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+                .hub-card { min-height: 126px; padding: 13px !important; }
+                .hub-card-title { font-size: 13px !important; }
+            }
+            @media (max-width: 380px) { .hub-grid { grid-template-columns: 1fr; } }
             @media (max-aspect-ratio: 1.4/1) {
                 .flip-clock { gap: 3vw !important; }
-                .flip-card { width: 45vw !important; height: 45vw !important; border-radius: 3vw !important; box-shadow: 0 2vw 6vw rgba(0,0,0,0.9); }
-                .flip-card span { font-size: 40vw !important; line-height: 45vw !important; letter-spacing: -0.5vw; }
+                .flip-card {
+                    width: 45vw !important;
+                    height: 45vw !important;
+                    border-radius: 3vw !important;
+                    box-shadow: 0 2vw 6vw rgba(0,0,0,0.9);
+                }
+                .flip-card span {
+                    font-size: 40vw !important;
+                    letter-spacing: -0.5vw;
+                    line-height: 45vw !important;
+                }
                 .flip-card::after { height: 1.2vw !important; }
             }
         </style>
@@ -349,15 +545,30 @@
         
         <div id="greeting"></div>
 
-        <div id="screensaver">
-            <div class="flip-clock">
-                <div class="flip-card"><span id="flip-hours">00</span></div>
-                <div class="flip-card"><span id="flip-minutes">00</span></div>
-            </div>
+    <div id="screensaver">
+        <div class="flip-clock">
+            <div class="flip-card"><span id="flip-hours">00</span></div>
+            <div class="flip-card"><span id="flip-minutes">00</span></div>
+        </div>
+    </div>
+
+        <div id="links-hub" aria-hidden="true">
+            <main class="hub-page" aria-labelledby="hub-title">
+                <div class="hub-header">
+                    <div class="hub-heading">
+                        <p class="hub-kicker">Merijn's internet</p>
+                        <h1 class="hub-title" id="hub-title">A little launchpad.</h1>
+                    </div>
+                    <p class="hub-intro">Things I've made, useful little tools, and places worth keeping close.</p>
+                </div>
+                <input class="hub-search" id="hub-search" type="search" aria-label="Search links" placeholder="Find something..." autocomplete="off">
+                <p class="hub-status" id="hub-status" role="status"></p>
+                <div class="hub-results" id="hub-results"></div>
+            </main>
         </div>
 
         <header>
-            <a href="https://mail.proton.me/u/0/inbox">Mail</a>
+            <a href="#" id="hub-toggle-link">Links</a>
             <a href="#" id="apps-toggle-link">
                 <img id="products" src="products.png" alt="Apps" width="24" height="24" draggable="false"/>
             </a>
@@ -382,7 +593,7 @@
                 </div>
                 <hr class="apps-divider">
                 <div class="app-grid">
-                    <a href="https://login.canvas.uva.nl" class="app-item"><i class="fas fa-graduation-cap"></i><span>Canvas</span></a>
+                    <a href="https://brightspace.universiteitleiden.nl/d2l/home" class="app-item"><i class="fas fa-graduation-cap"></i><span>Brightspace</span></a>
                     <a href="https://www.overleaf.com/project" class="app-item"><i class="fas fa-leaf"></i><span>Overleaf</span></a>
                     <a href="https://drive.google.com/drive/u/1/my-drive" class="app-item"><i class="fab fa-google-drive"></i><span>Drive</span></a>
                     <a href="https://www.office.com/apps" class="app-item"><i class="fab fa-microsoft"></i><span>Office</span></a>
@@ -482,6 +693,17 @@
         document.addEventListener('keydown', function(e) {
             // Esc clears the searchbar
             if (e.key === 'Escape') {
+                const linksHub = document.getElementById('links-hub');
+                if (linksHub.classList.contains('active')) {
+                    e.preventDefault();
+                    closeLinksHub();
+                    return;
+                }
+                if (document.getElementById('screensaver').classList.contains('active')) {
+                    e.preventDefault();
+                    closeScreensaver();
+                    return;
+                }
                 e.preventDefault();
                 const input = document.getElementById('searchInput');
                 input.value = '';
@@ -492,6 +714,7 @@
             
             // Auto-focus on typing
             if (document.activeElement !== document.getElementById('searchInput') && 
+                !document.body.classList.contains('hub-open') &&
                 e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
                 document.getElementById('searchInput').focus();
             }
@@ -499,39 +722,34 @@
 
         // --- Screensaver Logic ---
         (function() {
-            let timeout;
             const screensaver = document.getElementById('screensaver');
+            const greeting = document.getElementById('greeting');
             const hoursEl = document.getElementById('flip-hours');
             const minutesEl = document.getElementById('flip-minutes');
 
             function updateTime() {
                 const now = new Date();
-                hoursEl.innerText = String(now.getHours()).padStart(2, '0');
-                minutesEl.innerText = String(now.getMinutes()).padStart(2, '0');
+                hoursEl.textContent = String(now.getHours()).padStart(2, '0');
+                minutesEl.textContent = String(now.getMinutes()).padStart(2, '0');
             }
 
-            function triggerScreensaver() {
-                updateTime(); 
+            function openScreensaver() {
+                updateTime();
                 screensaver.classList.add('active');
             }
 
-            function resetTimer() {
-                if (screensaver.classList.contains('active')) {
-                    screensaver.classList.remove('active');
-                    document.getElementById('searchInput').focus();
-                }
-                clearTimeout(timeout);
-                timeout = setTimeout(triggerScreensaver, 30000); // 120,000 ms = 2 minutes
-            }
-
+            greeting.addEventListener('click', openScreensaver);
+            screensaver.addEventListener('mousedown', closeScreensaver);
+            screensaver.addEventListener('touchstart', closeScreensaver);
             setInterval(updateTime, 1000);
-            window.onload = resetTimer;
-            document.onmousemove = resetTimer;
-            document.onkeydown = resetTimer;
-            document.onmousedown = resetTimer; 
-            document.ontouchstart = resetTimer;
-            document.onscroll = resetTimer;
         })();
+
+        function closeScreensaver() {
+            const screensaver = document.getElementById('screensaver');
+            if (!screensaver.classList.contains('active')) return;
+            screensaver.classList.remove('active');
+            document.getElementById('searchInput').focus();
+        }
 
         // --- Apps Menu Logic ---
         const appsToggle = document.getElementById('apps-toggle-link');
@@ -549,9 +767,8 @@
         // --- Local App Launch & Popup Logic ---
         const appsData = [
             { name: 'Archive', url: 'https://archive.org/', icon: 'fas fa-university', aliases: ['wayback', 'internet archive'] },
-            { name: 'Calendar', url: 'https://outlook.live.com/calendar/view/month', icon: 'fas fa-calendar-alt', aliases: ['agenda', 'planning'] },
             { name: 'Canva', url: 'https://www.canva.com/', icon: 'fas fa-paint-brush', aliases: ['design'] },
-            { name: 'Canvas', url: 'https://login.canvas.uva.nl', icon: 'fas fa-graduation-cap', aliases: ['uva', 'school', 'study'] },
+            { name: 'Brightspace', url: 'https://brightspace.universiteitleiden.nl/d2l/home', icon: 'fas fa-graduation-cap', aliases: ['bs', 'lu', 'course'] },
             { name: 'DeepL', url: 'https://www.deepl.com/translator', icon: 'fas fa-language', aliases: ['translation', 'translator'] },
             { name: 'Drive', url: 'https://drive.google.com/drive/u/1/my-drive', icon: 'fab fa-google-drive', aliases: ['google drive', 'cloud', 'files'] },
             { name: 'GitHub', url: 'https://github.com/merijnvervoorn', icon: 'fab fa-github', aliases: ['git', 'code', 'repo'] },
@@ -577,14 +794,256 @@
         // --- Fetch merijn.cc Links ---
         let merijnLinks = {};
         let linksKeys = [];
+        let linksLoaded = false;
+        let linksLoadError = null;
+        const linksHub = document.getElementById('links-hub');
+        const hubSearch = document.getElementById('hub-search');
+        const hubStatus = document.getElementById('hub-status');
+        const hubResults = document.getElementById('hub-results');
 
         fetch('https://merijn.cc/links.json')
-            .then(response => response.json())
-            .then(data => {
-                merijnLinks = data;
-                linksKeys = Object.keys(data).filter(k => k.trim() !== ''); // Exclude the empty root key
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Request failed with status ${response.status}`);
+                }
+                return response.json();
             })
-            .catch(err => console.error('Could not load links.json:', err));
+            .then(data => {
+                if (!data || typeof data !== 'object' || Array.isArray(data)) {
+                    throw new Error('links.json must contain a JSON object');
+                }
+                merijnLinks = data;
+                linksKeys = Object.keys(data).filter(key => key.trim() !== '' && typeof data[key] === 'string');
+                linksLoaded = true;
+                if (linksHub.classList.contains('active')) {
+                    renderLinksHub();
+                }
+            })
+            .catch(err => {
+                linksLoadError = err;
+                console.error('Could not load links.json:', err);
+                if (linksHub.classList.contains('active')) {
+                    renderLinksHub();
+                }
+            });
+
+        function getHubDestinations() {
+            const destinations = new Map();
+            const projectAliases = new Set([
+                'citroenogen', 'dodge', 'cme', 'islandtm', 'search', 'duckduckbang',
+                'linus', 'linus.sh', 'coalitie-voorspeller', 'coalitievoorspeller',
+                'coalitie-voorspelling', 'coalition-predictor', 'coalitie-bouwer',
+                'coalitie', 'digitalcommons', 'commons', 'anglereader',
+                'learnpython', 'python-dojo', 'learn-python', 'python'
+            ]);
+            const gameAliases = new Set([
+                'game-hub', 'yatz', 'yahtz', 'yahtzee', 'yhatzee', 'yathzee',
+                'yatzy', 'yatzle', 'yatzl', 'yahtzle', 'yathzle', 'dice',
+                'chooser', 'chwazi', 'chwasi', 'random-card', 'randomcard',
+                'random-card-generator', 'game-wheel', 'gamewheel',
+                'soundsfishy', 'fishy', 'pickomino', 'regenwormen', 'xxiwq'
+            ]);
+            const toolAliases = new Set([
+                'pomodoro', 'pomodoro-timer', 'qr', 'qr-code', 'maths-playground',
+                'mathsplayground', 'maths', 'math', 'watertappunt', 'watertap',
+                'merijns-watertappunt', 'merijnswatertappunt', 'bias', 'redirect'
+            ]);
+
+            Object.entries(merijnLinks).forEach(([key, rawUrl]) => {
+                if (typeof rawUrl !== 'string') return;
+
+                let parsedUrl;
+                try {
+                    parsedUrl = new URL(rawUrl);
+                } catch {
+                    return;
+                }
+                if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') return;
+
+                const url = parsedUrl.href;
+                if (!destinations.has(url)) {
+                    destinations.set(url, {
+                        url,
+                        hostname: parsedUrl.hostname.replace(/^www\./i, ''),
+                        keys: []
+                    });
+                }
+                if (key.trim()) {
+                    destinations.get(url).keys.push(key);
+                }
+            });
+
+            const hubDestinations = Array.from(destinations.values()).map(destination => {
+                const titleKey = destination.keys
+                    .map(key => key.replace(/^\/+|\/+$/g, ''))
+                    .filter(key => key && key.toLowerCase() !== 'index')
+                    .sort((a, b) => {
+                        const depthDifference = a.split('/').length - b.split('/').length;
+                        return depthDifference || a.length - b.length || a.localeCompare(b);
+                    })[0];
+                const titleSource = titleKey ? titleKey.split('/').pop() : 'Home';
+                destination.title = titleSource
+                    .replace(/[-_.]+/g, ' ')
+                    .replace(/\b\w/g, character => character.toUpperCase());
+                destination.path = new URL(destination.url).pathname.replace(/\/+$/, '') || '/';
+                const normalizedKeys = destination.keys.map(key => key.replace(/^\/+|\/+$/g, '').toLowerCase());
+                const isPortfolioPage = destination.hostname.endsWith('merijnvervoorn.com') &&
+                    /(^|\/)projects(\/|$)/i.test(destination.path);
+                if (isPortfolioPage) {
+                    destination.category = 'portfolio';
+                } else if (normalizedKeys.some(key => projectAliases.has(key))) {
+                    destination.category = 'projects';
+                } else if (normalizedKeys.some(key => gameAliases.has(key))) {
+                    destination.category = 'play';
+                } else if (normalizedKeys.some(key => toolAliases.has(key))) {
+                    destination.category = 'tools';
+                } else {
+                    destination.category = 'elsewhere';
+                }
+                return destination;
+            });
+
+            const titleCounts = new Map();
+            hubDestinations.forEach(destination => {
+                const normalizedTitle = destination.title.toLowerCase();
+                titleCounts.set(normalizedTitle, (titleCounts.get(normalizedTitle) || 0) + 1);
+            });
+            hubDestinations.forEach(destination => {
+                if (titleCounts.get(destination.title.toLowerCase()) > 1 && destination.category === 'portfolio') {
+                    const version = destination.path.startsWith('/en/') ? 'English portfolio' : 'Portfolio';
+                    destination.title = `${destination.title} · ${version}`;
+                }
+            });
+            const disambiguatedTitleCounts = new Map();
+            hubDestinations.forEach(destination => {
+                const normalizedTitle = destination.title.toLowerCase();
+                disambiguatedTitleCounts.set(normalizedTitle, (disambiguatedTitleCounts.get(normalizedTitle) || 0) + 1);
+            });
+            hubDestinations.forEach(destination => {
+                if (disambiguatedTitleCounts.get(destination.title.toLowerCase()) > 1) {
+                    destination.title = `${destination.title} · ${destination.path}`;
+                }
+                destination.searchText = `${destination.title} ${destination.url} ${destination.keys.join(' ')}`.toLowerCase();
+            });
+            return hubDestinations.sort((a, b) => a.title.localeCompare(b.title));
+        }
+
+        const hubSections = [
+            { id: 'projects', title: 'Made by me', description: 'Go straight to the projects themselves.', icon: 'fas fa-lightbulb', accent: '#e9e9fa', ink: '#646397' },
+            { id: 'tools', title: 'Little tools', description: 'Handy things for everyday tasks.', icon: 'fas fa-wrench', accent: '#e2f0ec', ink: '#4d8174' },
+            { id: 'play', title: 'For fun', description: 'Games and other ways to procrastinate.', icon: 'fas fa-dice', accent: '#f5eadf', ink: '#a47a51' },
+            { id: 'elsewhere', title: 'Around the web', description: 'Other sites and places I keep close.', icon: 'fas fa-compass', accent: '#e6edf5', ink: '#637b98' },
+            { id: 'portfolio', title: 'Project write-ups', description: 'Portfolio pages with the story behind each project.', icon: 'fas fa-book-open', accent: '#eee8e0', ink: '#897458' }
+        ];
+
+        function renderLinksHub() {
+            hubResults.replaceChildren();
+
+            if (linksLoadError) {
+                hubStatus.textContent = 'Could not load links.json. Check that merijn.cc allows this page to access it.';
+                return;
+            }
+            if (!linksLoaded) {
+                hubStatus.textContent = 'Loading your links...';
+                return;
+            }
+
+            const query = hubSearch.value.trim().toLowerCase();
+            const destinations = getHubDestinations().filter(destination => destination.searchText.includes(query));
+            if (destinations.length === 0) {
+                hubStatus.textContent = query ? 'No pages match your search.' : 'No destinations were found.';
+                return;
+            }
+
+            hubStatus.textContent = `${destinations.length} destination${destinations.length === 1 ? '' : 's'}`;
+
+            hubSections.forEach(sectionInfo => {
+                const items = destinations.filter(destination => destination.category === sectionInfo.id);
+                if (items.length === 0) return;
+
+                    const section = document.createElement('section');
+                    section.className = 'hub-section';
+                    section.dataset.section = sectionInfo.id;
+
+                    const sectionHeader = document.createElement('div');
+                    sectionHeader.className = 'hub-section-header';
+
+                    const heading = document.createElement('h2');
+                    heading.className = 'hub-section-title';
+                    heading.textContent = sectionInfo.title;
+                    sectionHeader.appendChild(heading);
+
+                    const description = document.createElement('p');
+                    description.className = 'hub-section-description';
+                    description.textContent = sectionInfo.description;
+                    sectionHeader.appendChild(description);
+                    section.appendChild(sectionHeader);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'hub-grid';
+                    items.forEach(item => {
+                        const link = document.createElement('a');
+                        link.className = 'hub-card';
+                        link.href = item.url;
+
+                        const mark = document.createElement('span');
+                        mark.className = 'hub-card-mark';
+                        mark.style.setProperty('--hub-accent', sectionInfo.accent);
+                        mark.style.setProperty('--hub-ink', sectionInfo.ink);
+                        mark.innerHTML = `<i class="${sectionInfo.icon}" aria-hidden="true"></i>`;
+                        link.appendChild(mark);
+
+                        const title = document.createElement('span');
+                        title.className = 'hub-card-title';
+                        title.textContent = item.title;
+                        link.appendChild(title);
+
+                        const address = document.createElement('span');
+                        address.className = 'hub-card-description';
+                        address.textContent = `${item.hostname}${item.path === '/' ? '' : item.path}`;
+                        link.appendChild(address);
+
+                        const arrow = document.createElement('span');
+                        arrow.className = 'hub-card-arrow';
+                        arrow.setAttribute('aria-hidden', 'true');
+                        arrow.textContent = '↗';
+                        link.appendChild(arrow);
+
+                        grid.appendChild(link);
+                    });
+                    section.appendChild(grid);
+                    hubResults.appendChild(section);
+            });
+        }
+
+        function openLinksHub() {
+            hubSearch.value = '';
+            document.body.classList.add('hub-open');
+            linksHub.classList.add('active');
+            linksHub.setAttribute('aria-hidden', 'false');
+            document.getElementById('hub-toggle-link').textContent = 'Search';
+            appsMenu.classList.remove('show');
+            renderLinksHub();
+            hubSearch.focus();
+        }
+
+        function closeLinksHub() {
+            document.body.classList.remove('hub-open');
+            linksHub.classList.remove('active');
+            linksHub.setAttribute('aria-hidden', 'true');
+            document.getElementById('hub-toggle-link').textContent = 'Links';
+            document.getElementById('searchInput').focus();
+        }
+
+        document.getElementById('hub-toggle-link').addEventListener('click', event => {
+            event.preventDefault();
+            if (linksHub.classList.contains('active')) {
+                closeLinksHub();
+            } else {
+                openLinksHub();
+            }
+        });
+        hubSearch.addEventListener('input', renderLinksHub);
 
 
         const appPopup = document.getElementById('app-popup');
